@@ -12,7 +12,7 @@ Timaro is a SwiftUI time clock that clocks you in when you arrive at a workplace
 - **Timesheet**: swipe between months; each month shows a weekly bar chart against the daily target (vacation stacked in), a month summary, and the shifts grouped by day, with breaks, notes and full editing. You can also add shifts by hand.
 - **Earnings**: an hourly rate for each workplace.
 - **Punch rounding**: none, 5, 10, 15 or 30 minutes.
-- **CSV export** through the share sheet.
+- **CSV export** through the share sheet, and **CSV import** of daily totals (`Datum;Stunden;Sollstunden;Überstunden;Pause;Abwesenheitstyp`) from other time-clock apps; absence days are skipped and days that already have shifts are left alone.
 - **Notifications** on automatic punches.
 - **Widgets**: Home Screen (small, medium) and Lock Screen (circular, rectangular, inline) with a live timer, start time and breaks, today's progress, time account and vacation left. Interactive Start / Break / Resume / Finish buttons (App Intents that run in the app's process). The app shares a status snapshot with the widget through the App Group `group.com.timaro.timeclock`.
 - **Design**: Liquid Glass surfaces on iOS 26 (material fallback on iOS 17–18) with a light-blue accent.

@@ -130,6 +130,14 @@
 "Round punches to" = "Stempelzeiten runden auf";
 "Exact" = "Exakt";
 "Data" = "Daten";
+"Import times (CSV)" = "Zeiten importieren (CSV)";
+"Import times" = "Zeiten importieren";
+"Import" = "Importieren";
+"Found %lld days with working time. Skipped: %lld absence days (vacation, holidays, leave) and %lld days without time. Days that already have shifts in Timaro are left unchanged." = "%1$lld Tage mit Arbeitszeit gefunden. Übersprungen: %2$lld Abwesenheitstage (Ferien, Feiertage, Urlaub) und %3$lld Tage ohne Zeit. Tage, die in Timaro schon Schichten haben, bleiben unverändert.";
+"Import finished" = "Import abgeschlossen";
+"%lld days imported, %lld skipped because they already had shifts." = "%1$lld Tage importiert, %2$lld übersprungen, weil sie schon Schichten hatten.";
+"The file could not be read." = "Die Datei konnte nicht gelesen werden.";
+"OK" = "OK";
 "Export all shifts (CSV)" = "Alle Schichten exportieren (CSV)";
 "All data is stored only on this device." = "Alle Daten werden nur auf diesem Gerät gespeichert.";
 "Version" = "Version";

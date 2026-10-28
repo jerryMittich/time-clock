@@ -232,3 +232,53 @@ final class PeriodsTests: XCTestCase {
         XCTAssertEqual(days.last, day(11, 1))
     }
 }
+
+final class CSVImporterTests: XCTestCase {
+    private var calendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Europe/Berlin")!
+        return calendar
+    }()
+
+    private let sample = """
+    export_zeiten_2026;;;;;
+    Datum;Stunden;Sollstunden;Überstunden;Pause;Abwesenheitstyp
+    01.01.26;08:00;08:00;00:00;00:00;FEIERTAG
+    02.01.26;08:00;08:00;00:00;00:00;FERIE
+    07.01.26;08:10;08:00;00:10;00:45;
+    08.01.26;07:30;08:00;-00:30;00:40;
+    09.01.26;08:00;08:00;00:00;00:00;
+    12.01.26;08:20;08:00;00:20;00:00;FERIE 1/2
+    13.01.26;08:00;08:00;00:00;00:00;Sonderurlaub
+    30.12.26;00:00;08:00;-08:00;00:00;
+    ;1.726:39;2.088:00;-361:21;104:58;
+    """
+
+    func testParsesWorkDaysAndSkipsAbsences() {
+        let parsed = CSVImporter.parse(sample, calendar: calendar)
+        XCTAssertEqual(parsed.days.count, 4)
+        XCTAssertEqual(parsed.skippedAbsences, 3)
+        XCTAssertEqual(parsed.skippedEmpty, 1)
+        let first = parsed.days[0]
+        XCTAssertEqual(first.date, calendar.date(from: DateComponents(year: 2026, month: 1, day: 7)))
+        XCTAssertEqual(first.worked, (8 * 60 + 10) * 60)
+        XCTAssertEqual(first.breakMinutes, 45)
+    }
+
+    func testImportedDaysReproduceSourceOvertime() {
+        // +0:10 −0:30 ±0 +0:20 = 0:00, the same as the source's overtime column.
+        let parsed = CSVImporter.parse(sample, calendar: calendar)
+        let entries = parsed.days.map { TimeAccount.Entry(start: $0.date, worked: $0.worked, isOpen: false) }
+        XCTAssertEqual(TimeAccount.balance(entries, target: 8 * 3600, calendar: calendar), 0, accuracy: 1)
+    }
+
+    func testDurationsAndDates() {
+        XCTAssertEqual(CSVImporter.parseMinutes("08:05"), 485)
+        XCTAssertEqual(CSVImporter.parseMinutes("-00:45"), -45)
+        XCTAssertEqual(CSVImporter.parseMinutes("1.726:39"), 103_599)
+        XCTAssertNil(CSVImporter.parseMinutes("FERIE"))
+        XCTAssertEqual(CSVImporter.parseDate("07.01.2026", calendar: calendar),
+                       calendar.date(from: DateComponents(year: 2026, month: 1, day: 7)))
+        XCTAssertNil(CSVImporter.parseDate("", calendar: calendar))
+    }
+}

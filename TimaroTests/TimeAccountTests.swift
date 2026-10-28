@@ -199,3 +199,36 @@ final class WidgetSnapshotTests: XCTestCase {
         XCTAssertEqual(decoded, s)
     }
 }
+
+final class PeriodsTests: XCTestCase {
+    private var calendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Europe/Berlin")!
+        calendar.firstWeekday = 2 // Monday
+        return calendar
+    }()
+
+    private func day(_ month: Int, _ day: Int, year: Int = 2026) -> Date {
+        calendar.date(from: DateComponents(year: year, month: month, day: day))!
+    }
+
+    func testMonthsAcrossYearEnd() {
+        let months = Periods.months(from: day(11, 15), through: day(2, 3, year: 2027), calendar: calendar)
+        XCTAssertEqual(months, [day(11, 1), day(12, 1), day(1, 1, year: 2027), day(2, 1, year: 2027)])
+    }
+
+    func testWeeksOfOctober2026StartOnMonday() {
+        // 1 Oct 2026 is a Thursday, 31 Oct a Saturday.
+        let weeks = Periods.weeks(inMonth: day(10, 1), calendar: calendar)
+        XCTAssertEqual(weeks.first, day(9, 28))
+        XCTAssertEqual(weeks.last, day(10, 26))
+        XCTAssertEqual(weeks.count, 5)
+    }
+
+    func testWeekHasSevenConsecutiveDays() {
+        let days = Periods.days(ofWeek: day(10, 26), calendar: calendar)
+        XCTAssertEqual(days.count, 7)
+        XCTAssertEqual(days.first, day(10, 26))
+        XCTAssertEqual(days.last, day(11, 1))
+    }
+}

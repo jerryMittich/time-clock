@@ -69,6 +69,15 @@
 "That is %@ of vacation." = "Das sind %@ Urlaub.";
 
 /* Timesheet */
+"Month" = "Monat";
+"Difference" = "Differenz";
+"Previous month" = "Vorheriger Monat";
+"Next month" = "Nächster Monat";
+"Previous week" = "Vorherige Woche";
+"Next week" = "Nächste Woche";
+"Week %@" = "KW %@";
+"Day" = "Tag";
+"Target" = "Soll";
 "Time above %@ per day is added to the account; shorter days are covered from it." = "Zeit über %@ pro Tag wird dem Stundenkonto gutgeschrieben; kürzere Tage werden daraus ausgeglichen.";
 "No shifts yet" = "Noch keine Schichten";
 "Clock in manually or add a workplace to track automatically." = "Stemple von Hand oder lege einen Arbeitsort an, um automatisch zu stempeln.";

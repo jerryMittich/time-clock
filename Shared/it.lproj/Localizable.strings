@@ -69,6 +69,15 @@
 "That is %@ of vacation." = "Sono %@ di ferie.";
 
 /* Timesheet */
+"Month" = "Mese";
+"Difference" = "Differenza";
+"Previous month" = "Mese precedente";
+"Next month" = "Mese successivo";
+"Previous week" = "Settimana precedente";
+"Next week" = "Settimana successiva";
+"Week %@" = "Settimana %@";
+"Day" = "Giorno";
+"Target" = "Obiettivo";
 "Time above %@ per day is added to the account; shorter days are covered from it." = "Il tempo oltre %@ al giorno va nella banca ore; i giorni più corti vengono coperti da essa.";
 "No shifts yet" = "Ancora nessun turno";
 "Clock in manually or add a workplace to track automatically." = "Timbra a mano o aggiungi un luogo di lavoro per timbrare in automatico.";

@@ -6,7 +6,8 @@ struct SettingsView: View {
     @AppStorage(AppSettings.Key.notifyOnAutoPunch) private var notifyOnAutoPunch = true
     @AppStorage(AppSettings.Key.roundingMinutes) private var roundingMinutes = 0
     @AppStorage(AppSettings.Key.exitDelayMinutes) private var exitDelayMinutes = 5
-    @AppStorage(AppSettings.Key.weeklyTargetHours) private var weeklyTargetHours = 40.0
+    @AppStorage(AppSettings.Key.dailyTargetHours) private var dailyTargetHours = 8.0
+    @AppStorage(AppSettings.Key.initialBalanceMinutes) private var initialBalanceMinutes = 0
 
     private let monitor = LocationMonitor.shared
 
@@ -32,13 +33,22 @@ struct SettingsView: View {
                     }
                 }
 
+                Section {
+                    Stepper("Daily target: \(Formatters.duration(dailyTargetHours * 3600))",
+                            value: $dailyTargetHours, in: 0...12, step: 0.5)
+                    Stepper("Starting balance: \(Formatters.signedDuration(Double(initialBalanceMinutes * 60)))",
+                            value: $initialBalanceMinutes, in: -12_000...12_000, step: 15)
+                } header: {
+                    Text("Time account")
+                } footer: {
+                    Text("Use the starting balance to carry over existing overtime or to correct the account.")
+                }
+
                 Section("Timesheet") {
                     Picker("Round punches to", selection: $roundingMinutes) {
                         Text("Exact").tag(0)
                         ForEach([5, 10, 15, 30], id: \.self) { Text("\($0) min").tag($0) }
                     }
-                    Stepper("Weekly target: \(Int(weeklyTargetHours)) h",
-                            value: $weeklyTargetHours, in: 0...80, step: 1)
                 }
 
                 Section("Data") {

@@ -43,8 +43,20 @@ final class ClockService {
 
     func clockOut(date: Date = .now, automatic: Bool = false) {
         guard let session = openSession() else { return }
-        session.end = max(session.start, AppSettings.rounded(date))
+        session.close(at: AppSettings.rounded(date))
         session.closedAutomatically = automatic
+        save()
+    }
+
+    func startBreak(date: Date = .now) {
+        guard let session = openSession() else { return }
+        session.startBreak(at: date)
+        save()
+    }
+
+    func endBreak(date: Date = .now) {
+        guard let session = openSession() else { return }
+        session.endBreak(at: date)
         save()
     }
 

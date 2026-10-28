@@ -76,8 +76,12 @@ struct SessionEditor: View {
             return new
         }()
         target.start = start
-        target.end = isOpen ? nil : max(start, end)
         target.breakMinutes = breakMinutes
+        if isOpen {
+            target.end = nil
+        } else {
+            target.close(at: end)
+        }
         target.note = note
         target.workplace = workplaces.first { $0.id == workplaceID }
         try? context.save()

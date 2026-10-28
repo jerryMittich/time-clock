@@ -8,33 +8,56 @@ struct TimesheetView: View {
     @State private var editing: WorkSession?
     @State private var addingNew = false
     @State private var exportURL: URL?
+    @AppStorage(AppSettings.Key.dailyTargetHours) private var dailyTargetHours = 8.0
+    @AppStorage(AppSettings.Key.initialBalanceMinutes) private var initialBalanceMinutes = 0
 
-    private var weeks: [(start: Date, sessions: [WorkSession])] {
+    private var days: [(day: TimeAccount.Day, sessions: [WorkSession])] {
         let calendar = Calendar.current
-        let grouped = Dictionary(grouping: sessions) {
-            calendar.dateInterval(of: .weekOfYear, for: $0.start)?.start ?? $0.start
-        }
-        return grouped.keys.sorted(by: >).map { ($0, grouped[$0] ?? []) }
+        let grouped = Dictionary(grouping: sessions) { calendar.startOfDay(for: $0.start) }
+        return TimeAccount.days(sessions.map { $0.accountEntry() }, target: dailyTargetHours * 3600)
+            .map { ($0, grouped[$0.date] ?? []) }
+    }
+
+    private var balance: TimeInterval {
+        TimeAccount.balance(sessions.map { $0.accountEntry() },
+                            target: dailyTargetHours * 3600,
+                            initial: Double(initialBalanceMinutes * 60))
     }
 
     var body: some View {
         NavigationStack {
             List {
-                ForEach(weeks, id: \.start) { week in
+                if !sessions.isEmpty {
                     Section {
-                        ForEach(week.sessions) { session in
+                        LabeledContent("Time account") {
+                            Text(Formatters.signedDuration(balance))
+                                .monospacedDigit()
+                                .foregroundStyle(balance < -30 ? .red : (balance > 30 ? .green : .primary))
+                        }
+                    } footer: {
+                        Text("Time above \(Formatters.duration(dailyTargetHours * 3600)) per day is added to the account; shorter days are covered from it.")
+                    }
+                }
+                ForEach(days, id: \.day.id) { entry in
+                    Section {
+                        ForEach(entry.sessions) { session in
                             Button { editing = session } label: { SessionRow(session: session) }
                                 .buttonStyle(.plain)
                         }
                         .onDelete { offsets in
-                            offsets.map { week.sessions[$0] }.forEach { context.delete($0) }
+                            offsets.map { entry.sessions[$0] }.forEach { context.delete($0) }
                         }
                     } header: {
                         HStack {
-                            Text("Week of \(week.start.formatted(date: .abbreviated, time: .omitted))")
+                            Text(entry.day.date.formatted(.dateTime.weekday(.wide).day().month()))
                             Spacer()
-                            Text(Formatters.duration(week.sessions.reduce(0) { $0 + $1.duration() }))
+                            Text(Formatters.duration(entry.day.worked))
                                 .monospacedDigit()
+                            if !entry.day.inProgress {
+                                Text(Formatters.signedDuration(entry.day.delta))
+                                    .monospacedDigit()
+                                    .foregroundStyle(entry.day.delta < -30 ? .red : .green)
+                            }
                         }
                     }
                 }
@@ -75,7 +98,7 @@ private struct SessionRow: View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 HStack(spacing: 6) {
-                    Text(session.start.formatted(.dateTime.weekday(.abbreviated).day().month()))
+                    Text(timeRange)
                         .font(.headline)
                     if session.isAutomatic {
                         Image(systemName: "location.fill")
@@ -83,9 +106,11 @@ private struct SessionRow: View {
                             .foregroundStyle(.tint)
                     }
                 }
-                Text(timeRange)
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                if session.breakMinutes > 0 || session.isPaused {
+                    Text("Breaks: \(Formatters.duration(session.breakDuration()))")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
                 if let name = session.workplace?.name {
                     Text(name).font(.caption).foregroundStyle(.secondary)
                 }

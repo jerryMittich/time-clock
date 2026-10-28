@@ -1,0 +1,2 @@
+"NSLocationWhenInUseUsageDescription" = "Timaro verwendet deinen Standort, um deine Arbeitsorte auf der Karte anzuzeigen.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "Timaro verwendet deinen Standort im Hintergrund, um dich automatisch ein- und auszustempeln, wenn du an einem Arbeitsort ankommst oder ihn verlässt.";

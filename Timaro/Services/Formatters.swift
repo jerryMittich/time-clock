@@ -7,6 +7,12 @@ enum Formatters {
         return String(format: "%dh %02dm", total / 60, total % 60)
     }
 
+    /// "+1h 05m" / "−0h 30m" style balance.
+    static func signedDuration(_ seconds: TimeInterval) -> String {
+        let sign = seconds < -30 ? "−" : "+"
+        return sign + duration(abs(seconds))
+    }
+
     /// "07:42:10" style running clock.
     static func clock(_ seconds: TimeInterval) -> String {
         let s = Int(seconds)

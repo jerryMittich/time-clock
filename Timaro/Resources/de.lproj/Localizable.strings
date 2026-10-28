@@ -1,0 +1,97 @@
+/* Tabs */
+"Clock" = "Stempeln";
+"Timesheet" = "Zeiten";
+"Workplaces" = "Arbeitsorte";
+"Settings" = "Einstellungen";
+
+/* Onboarding */
+"Hands-free time clock" = "Die Stempeluhr, die von selbst stempelt";
+"Add your workplaces on the map." = "Lege deine Arbeitsorte auf der Karte an.";
+"Timaro clocks you in when you arrive and out when you leave." = "Timaro stempelt dich ein, wenn du ankommst, und aus, wenn du gehst.";
+"See hours, overtime and earnings, and export to CSV." = "Behalte Stunden, Überstunden und Verdienst im Blick und exportiere als CSV.";
+"Your data stays on your iPhone." = "Deine Daten bleiben auf deinem iPhone.";
+"To track automatically, allow location access \"Always\" when asked." = "Erlaube für automatisches Stempeln den Standortzugriff \"Immer\", wenn du gefragt wirst.";
+"Get started" = "Los geht's";
+
+/* Clock */
+"Allow location access \"Always\" to clock in automatically." = "Erlaube den Standortzugriff \"Immer\", um automatisch zu stempeln.";
+"Clocked in automatically" = "Automatisch eingestempelt";
+"Clocked in" = "Eingestempelt";
+"Clocked out" = "Ausgestempelt";
+"Not clocked in" = "Nicht eingestempelt";
+"No workplace" = "Kein Arbeitsort";
+"Workplace" = "Arbeitsort";
+"%@ · since %@" = "%1$@ · seit %2$@";
+"On break since %@ · %@" = "In Pause seit %1$@ · %2$@";
+"Breaks: %@" = "Pausen: %@";
+"Start" = "Start";
+"Break" = "Pause";
+"Resume" = "Weiter";
+"Finish" = "Beenden";
+"Today" = "Heute";
+"This week" = "Diese Woche";
+"Time account" = "Stundenkonto";
+"+%@ overtime today" = "+%@ Überstunden heute";
+"%@ to go · target reached at %@" = "Noch %1$@ · Soll erreicht um %2$@";
+"%@ to go" = "Noch %@";
+"Arrived at %@" = "Angekommen: %@";
+"Left %@ · %@" = "%1$@ verlassen · %2$@";
+
+/* Timesheet */
+"Time above %@ per day is added to the account; shorter days are covered from it." = "Zeit über %@ pro Tag wird dem Stundenkonto gutgeschrieben; kürzere Tage werden daraus ausgeglichen.";
+"No shifts yet" = "Noch keine Schichten";
+"Clock in manually or add a workplace to track automatically." = "Stemple von Hand oder lege einen Arbeitsort an, um automatisch zu stempeln.";
+"Export" = "Exportieren";
+"Add shift" = "Schicht hinzufügen";
+"New shift" = "Neue Schicht";
+"Edit shift" = "Schicht bearbeiten";
+"End" = "Ende";
+"Still clocked in" = "Noch eingestempelt";
+"Break: %lld min" = "Pause: %lld min";
+"Note" = "Notiz";
+"Optional" = "Optional";
+"Delete shift" = "Schicht löschen";
+"Cancel" = "Abbrechen";
+"Save" = "Sichern";
+
+/* Workplaces */
+"Automatic · %lld m" = "Automatisch · %lld m";
+"Manual only" = "Nur manuell";
+"%@/h" = "%@/Std.";
+"iOS can monitor up to %lld places at once. Only the first %lld are tracked automatically." = "iOS kann höchstens %1$lld Orte gleichzeitig überwachen. Nur die ersten %2$lld werden automatisch gestempelt.";
+"No workplaces" = "Keine Arbeitsorte";
+"Add the places where you work and Timaro will clock you in and out automatically." = "Lege die Orte an, an denen du arbeitest, und Timaro stempelt dich automatisch ein und aus.";
+"Add workplace" = "Arbeitsort hinzufügen";
+"New workplace" = "Neuer Arbeitsort";
+"Edit workplace" = "Arbeitsort bearbeiten";
+"Name" = "Name";
+"Color" = "Farbe";
+"Search address" = "Adresse suchen";
+"Use current location" = "Aktuellen Standort verwenden";
+"Radius: %lld m" = "Radius: %lld m";
+"Location" = "Standort";
+"Tap the map to move the pin. A radius of at least 150 m gives the most reliable results." = "Tippe auf die Karte, um die Stecknadel zu versetzen. Ein Radius ab 150 m funktioniert am zuverlässigsten.";
+"Clock in/out automatically" = "Automatisch ein-/ausstempeln";
+"Hourly rate" = "Stundenlohn";
+
+/* Settings */
+"Automatic tracking" = "Automatisches Stempeln";
+"Location access" = "Standortzugriff";
+"Open iOS Settings" = "iOS-Einstellungen öffnen";
+"Notify on automatic punches" = "Bei automatischem Stempeln benachrichtigen";
+"Resume shift if back within" = "Schicht fortsetzen, wenn zurück innerhalb von";
+"Off" = "Aus";
+"%lld min" = "%lld Min.";
+"Daily target: %@" = "Tagessoll: %@";
+"Starting balance: %@" = "Anfangssaldo: %@";
+"Use the starting balance to carry over existing overtime or to correct the account." = "Mit dem Anfangssaldo übernimmst du bestehende Überstunden oder korrigierst das Stundenkonto.";
+"Round punches to" = "Stempelzeiten runden auf";
+"Exact" = "Exakt";
+"Data" = "Daten";
+"Export all shifts (CSV)" = "Alle Schichten exportieren (CSV)";
+"All data is stored only on this device." = "Alle Daten werden nur auf diesem Gerät gespeichert.";
+"Version" = "Version";
+"Always" = "Immer";
+"While using" = "Beim Verwenden";
+"Denied" = "Abgelehnt";
+"Not set" = "Nicht festgelegt";

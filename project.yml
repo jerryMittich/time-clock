@@ -6,7 +6,7 @@ options:
   developmentLanguage: en
 settings:
   base:
-    MARKETING_VERSION: "1.0.0"
+    MARKETING_VERSION: "1.1.0"
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_VERSION: "5.9"
 targets:
@@ -31,4 +31,18 @@ targets:
       path: Timaro/Info.plist
       properties:
         UIBackgroundModes: [location]
-        CFBundleLocalizations: [en, it]
+        CFBundleLocalizations: [en, de, it]
+    scheme:
+      testTargets:
+        - TimaroTests
+  TimaroTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: TimaroTests
+    dependencies:
+      - target: Timaro
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.timaro.timeclock.tests
+        GENERATE_INFOPLIST_FILE: YES

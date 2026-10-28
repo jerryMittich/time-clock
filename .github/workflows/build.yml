@@ -24,3 +24,13 @@ jobs:
             -scheme Timaro \
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO
+      - name: Run unit tests
+        run: |
+          UDID=$(xcrun simctl list devices available -j \
+            | jq -r '[.devices | to_entries[] | select(.key | contains("iOS")) | .value[] | select(.name | startswith("iPhone"))][0].udid')
+          echo "Using simulator $UDID"
+          xcodebuild test \
+            -project Timaro.xcodeproj \
+            -scheme Timaro \
+            -destination "id=$UDID" \
+            CODE_SIGNING_ALLOWED=NO

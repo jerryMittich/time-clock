@@ -6,7 +6,9 @@ enum AppSettings {
         static let notifyOnAutoPunch = "notifyOnAutoPunch"
         static let roundingMinutes = "roundingMinutes"
         static let exitDelayMinutes = "exitDelayMinutes"
-        static let weeklyTargetHours = "weeklyTargetHours"
+        static let dailyTargetHours = "dailyTargetHours"
+        /// Starting balance of the time account, in minutes (may be negative).
+        static let initialBalanceMinutes = "initialBalanceMinutes"
     }
 
     static func registerDefaults() {
@@ -14,7 +16,8 @@ enum AppSettings {
             Key.notifyOnAutoPunch: true,
             Key.roundingMinutes: 0,
             Key.exitDelayMinutes: 5,
-            Key.weeklyTargetHours: 40.0
+            Key.dailyTargetHours: 8.0,
+            Key.initialBalanceMinutes: 0
         ])
     }
 

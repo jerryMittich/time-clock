@@ -1,14 +1,15 @@
 # Timaro — automatic time clock for iOS
 
-Timaro is a SwiftUI time clock that clocks you in when you arrive at a workplace and clocks you out when you leave, using iOS geofencing. You can also punch in and out by hand, edit shifts, track hours, overtime and earnings, and export a CSV timesheet. It is localized in English and Italian.
+Timaro is a SwiftUI time clock that clocks you in when you arrive at a workplace and clocks you out when you leave, using iOS geofencing. You can also punch in and out by hand, edit shifts, track hours, overtime and earnings, and export a CSV timesheet. It is localized in English, German and Italian.
 
 ## Features
 
 - **Automatic clock-in/out**: each workplace is a geofence (100–1000 m). It works in the background and after a reboot, because iOS relaunches the app when you cross a region boundary.
 - **Shift resume**: if you come back within N minutes of leaving (lunch break or GPS jitter), the same shift continues instead of a new one starting.
-- **Manual punch**: a large Clock in / Clock out button with a live timer.
+- **Manual punch with breaks**: Start in the morning, Break / Resume at lunch, Finish in the evening, with a live timer that stops during breaks.
+- **Time account**: a daily target (8 h by default). Time above it is credited to the account and shorter days are covered from it. Days without shifts are not counted, and a starting balance can be set.
 - **Timesheet**: shifts grouped by week, with breaks, notes and full editing. You can also add shifts by hand.
-- **Earnings and targets**: an hourly rate for each workplace, a weekly target, and an overtime display.
+- **Earnings**: an hourly rate for each workplace.
 - **Punch rounding**: none, 5, 10, 15 or 30 minutes.
 - **CSV export** through the share sheet.
 - **Notifications** on automatic punches.
@@ -23,7 +24,8 @@ Timaro/Models               SwiftData models (Workplace, WorkSession) and settin
 Timaro/Services             ClockService (punch rules), LocationMonitor (geofences),
                             notifications, CSV export, formatters
 Timaro/Views                SwiftUI screens
-Timaro/Resources            Asset catalog and Italian strings
+Timaro/Resources            Asset catalog and German/Italian strings
+TimaroTests                 Unit tests for the time account and break logic
 ```
 
 ## Build
@@ -36,7 +38,7 @@ xcodegen generate
 open Timaro.xcodeproj
 ```
 
-Set your signing team in the Timaro target. Change the bundle ID `com.timaro.timeclock` in `project.yml` if you need to. CI (`.github/workflows/build.yml`) builds the app for the simulator on every push.
+Set your signing team in the Timaro target. Change the bundle ID `com.timaro.timeclock` in `project.yml` if you need to. CI (`.github/workflows/build.yml`) builds the app and runs the unit tests in the simulator on every push.
 
 ## Uploading to App Store Connect
 

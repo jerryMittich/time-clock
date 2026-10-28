@@ -78,7 +78,9 @@
 "Edit shift" = "Schicht bearbeiten";
 "End" = "Ende";
 "Still clocked in" = "Noch eingestempelt";
-"Break: %lld min" = "Pause: %lld min";
+"%lld h" = "%lld Std.";
+"Hours" = "Stunden";
+"Minutes" = "Minuten";
 "Note" = "Notiz";
 "Optional" = "Optional";
 "Delete shift" = "Schicht löschen";

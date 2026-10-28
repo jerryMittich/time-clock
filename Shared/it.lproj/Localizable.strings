@@ -78,7 +78,9 @@
 "Edit shift" = "Modifica turno";
 "End" = "Fine";
 "Still clocked in" = "Ancora in servizio";
-"Break: %lld min" = "Pausa: %lld min";
+"%lld h" = "%lld h";
+"Hours" = "Ore";
+"Minutes" = "Minuti";
 "Note" = "Nota";
 "Optional" = "Facoltativa";
 "Delete shift" = "Elimina turno";

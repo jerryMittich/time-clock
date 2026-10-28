@@ -15,6 +15,7 @@ struct SessionEditor: View {
     @State private var breakMinutes = 0
     @State private var note = ""
     @State private var workplaceID: UUID?
+    @State private var editingBreak = false
 
     var body: some View {
         NavigationStack {
@@ -31,7 +32,19 @@ struct SessionEditor: View {
                     if session?.isOpen == true {
                         Toggle("Still clocked in", isOn: $isOpen)
                     }
-                    Stepper("Break: \(breakMinutes) min", value: $breakMinutes, in: 0...240, step: 5)
+                    Button {
+                        withAnimation(.snappy) { editingBreak.toggle() }
+                    } label: {
+                        LabeledContent("Break") {
+                            Text(Formatters.duration(Double(breakMinutes * 60)))
+                                .monospacedDigit()
+                                .foregroundStyle(editingBreak ? Color.accentColor : .secondary)
+                        }
+                    }
+                    .foregroundStyle(.primary)
+                    if editingBreak {
+                        BreakDurationPicker(minutes: $breakMinutes)
+                    }
                 }
                 Section("Note") {
                     TextField("Optional", text: $note, axis: .vertical)
@@ -87,5 +100,36 @@ struct SessionEditor: View {
         target.workplace = workplaces.first { $0.id == workplaceID }
         try? context.save()
         dismiss()
+    }
+}
+
+/// Hours and minutes wheels for the break, accurate to the minute.
+private struct BreakDurationPicker: View {
+    @Binding var minutes: Int
+
+    private var hours: Binding<Int> {
+        Binding(get: { minutes / 60 }, set: { minutes = $0 * 60 + minutes % 60 })
+    }
+
+    private var remainder: Binding<Int> {
+        Binding(get: { minutes % 60 }, set: { minutes = (minutes / 60) * 60 + $0 })
+    }
+
+    var body: some View {
+        HStack(spacing: 0) {
+            Picker("Hours", selection: hours) {
+                ForEach(0...12, id: \.self) { Text("\($0) h").tag($0) }
+            }
+            .pickerStyle(.wheel)
+            .frame(maxWidth: .infinity)
+            .clipped()
+            Picker("Minutes", selection: remainder) {
+                ForEach(0...59, id: \.self) { Text("\($0) min").tag($0) }
+            }
+            .pickerStyle(.wheel)
+            .frame(maxWidth: .infinity)
+            .clipped()
+        }
+        .frame(height: 150)
     }
 }

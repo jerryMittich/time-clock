@@ -52,7 +52,7 @@ struct SessionEditor: View {
                 if let session {
                     Section {
                         Button("Delete shift", role: .destructive) {
-                            context.delete(session)
+                            context.deleteAndSave([session])
                             dismiss()
                         }
                     }

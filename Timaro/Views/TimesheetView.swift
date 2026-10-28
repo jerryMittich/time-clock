@@ -178,7 +178,7 @@ private struct MonthPage: View {
                             // Long press instead of swipe, so horizontal swipes page between months.
                             .contextMenu {
                                 Button(role: .destructive) {
-                                    context.delete(session)
+                                    context.deleteAndSave([session])
                                 } label: {
                                     Label("Delete shift", systemImage: "trash")
                                 }

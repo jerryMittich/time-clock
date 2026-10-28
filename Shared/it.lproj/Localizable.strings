@@ -61,6 +61,8 @@
 "Planned" = "Pianificate";
 "Allowance %@: %@" = "Ferie spettanti %1$@: %2$@";
 "Half day" = "Mezza giornata";
+"Delete vacation day?" = "Eliminare il giorno di ferie?";
+"Delete" = "Elimina";
 "Full day" = "Giornata intera";
 "Half day off" = "Mezza giornata di ferie";
 "From" = "Dal";

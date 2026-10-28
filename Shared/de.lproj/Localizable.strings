@@ -61,6 +61,8 @@
 "Planned" = "Geplant";
 "Allowance %@: %@" = "Urlaubsanspruch %1$@: %2$@";
 "Half day" = "Halber Tag";
+"Delete vacation day?" = "Urlaubstag löschen?";
+"Delete" = "Löschen";
 "Full day" = "Ganzer Tag";
 "Half day off" = "Halber Tag Urlaub";
 "From" = "Von";

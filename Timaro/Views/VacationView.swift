@@ -8,6 +8,7 @@ struct VacationView: View {
     @State private var year = Calendar.current.component(.year, from: .now)
     @State private var allowance = AppSettings.vacationAllowance(for: Calendar.current.component(.year, from: .now))
     @State private var adding = false
+    @State private var deleting: VacationDay?
 
     private var daysInYear: [VacationDay] {
         vacationDays.filter { Calendar.current.component(.year, from: $0.date) == year }
@@ -49,10 +50,22 @@ struct VacationView: View {
                 ForEach(months, id: \.month) { entry in
                     Section {
                         ForEach(entry.days) { day in
-                            VacationRow(day: day)
-                        }
-                        .onDelete { offsets in
-                            offsets.map { entry.days[$0] }.forEach { context.delete($0) }
+                            Button { deleting = day } label: { VacationRow(day: day) }
+                                .buttonStyle(.plain)
+                                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                    Button(role: .destructive) {
+                                        context.deleteAndSave([day])
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
+                                .contextMenu {
+                                    Button(role: .destructive) {
+                                        context.deleteAndSave([day])
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
                         }
                     } header: {
                         HStack {
@@ -69,6 +82,17 @@ struct VacationView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { adding = true } label: { Label("Add vacation", systemImage: "plus") }
                 }
+            }
+            .confirmationDialog("Delete vacation day?",
+                                isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
+                                titleVisibility: .visible,
+                                presenting: deleting) { day in
+                Button("Delete", role: .destructive) {
+                    context.deleteAndSave([day])
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: { day in
+                Text(day.date.formatted(.dateTime.weekday(.wide).day().month(.wide).year()))
             }
             .sheet(isPresented: $adding) {
                 AddVacationSheet(defaultDate: defaultDateForYear)
@@ -247,6 +271,7 @@ struct AddVacationSheet: View {
             context.insert(VacationDay(date: date, isHalfDay: halfDay, note: note))
         }
         try? context.save()
+        WidgetBridge.refresh()
         dismiss()
     }
 }

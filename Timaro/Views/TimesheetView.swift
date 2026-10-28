@@ -4,6 +4,7 @@ import SwiftData
 struct TimesheetView: View {
     @Environment(\.modelContext) private var context
     @Query(sort: \WorkSession.start, order: .reverse) private var sessions: [WorkSession]
+    @Query private var vacationDays: [VacationDay]
 
     @State private var editing: WorkSession?
     @State private var addingNew = false
@@ -14,13 +15,16 @@ struct TimesheetView: View {
     private var days: [(day: TimeAccount.Day, sessions: [WorkSession])] {
         let calendar = Calendar.current
         let grouped = Dictionary(grouping: sessions) { calendar.startOfDay(for: $0.start) }
-        return TimeAccount.days(sessions.map { $0.accountEntry() }, target: dailyTargetHours * 3600)
+        return TimeAccount.days(sessions.map { $0.accountEntry() },
+                                target: dailyTargetHours * 3600,
+                                vacation: vacationDays.byDay)
             .map { ($0, grouped[$0.date] ?? []) }
     }
 
     private var balance: TimeInterval {
         TimeAccount.balance(sessions.map { $0.accountEntry() },
                             target: dailyTargetHours * 3600,
+                            vacation: vacationDays.byDay,
                             initial: Double(initialBalanceMinutes * 60))
     }
 
@@ -29,17 +33,32 @@ struct TimesheetView: View {
             List {
                 if !sessions.isEmpty {
                     Section {
-                        LabeledContent("Time account") {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Label("Time account", systemImage: "hourglass")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.secondary)
                             Text(Formatters.signedDuration(balance))
+                                .font(.system(size: 34, weight: .bold, design: .rounded))
                                 .monospacedDigit()
-                                .foregroundStyle(balance < -30 ? .red : (balance > 30 ? .green : .primary))
+                                .foregroundStyle(Theme.balanceColor(balance))
+                            Text("Time above \(Formatters.duration(dailyTargetHours * 3600)) per day is added to the account; shorter days are covered from it.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
-                    } footer: {
-                        Text("Time above \(Formatters.duration(dailyTargetHours * 3600)) per day is added to the account; shorter days are covered from it.")
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(18)
+                        .glassCard(cornerRadius: 26)
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
                     }
                 }
                 ForEach(days, id: \.day.id) { entry in
                     Section {
+                        if entry.day.vacation > 0 {
+                            Label(entry.day.vacation >= 1 ? LocalizedStringKey("Vacation") : "Half day off",
+                                  systemImage: entry.day.vacation >= 1 ? "sun.max.fill" : "sun.haze.fill")
+                                .foregroundStyle(Theme.pause)
+                        }
                         ForEach(entry.sessions) { session in
                             Button { editing = session } label: { SessionRow(session: session) }
                                 .buttonStyle(.plain)
@@ -53,17 +72,18 @@ struct TimesheetView: View {
                             Spacer()
                             Text(Formatters.duration(entry.day.worked))
                                 .monospacedDigit()
-                            if !entry.day.inProgress {
+                            if entry.day.hasShifts && !entry.day.inProgress {
                                 Text(Formatters.signedDuration(entry.day.delta))
                                     .monospacedDigit()
-                                    .foregroundStyle(entry.day.delta < -30 ? .red : .green)
+                                    .foregroundStyle(entry.day.delta < -30 ? Theme.negative : Theme.positive)
                             }
                         }
                     }
                 }
             }
+            .screenBackground()
             .overlay {
-                if sessions.isEmpty {
+                if sessions.isEmpty && vacationDays.isEmpty {
                     ContentUnavailableView("No shifts yet",
                                            systemImage: "clock.badge.questionmark",
                                            description: Text("Clock in manually or add a workplace to track automatically."))

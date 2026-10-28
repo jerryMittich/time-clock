@@ -5,6 +5,7 @@ struct ClockView: View {
     @Query(filter: #Predicate<WorkSession> { $0.end == nil }) private var openSessions: [WorkSession]
     @Query(sort: \WorkSession.start, order: .reverse) private var sessions: [WorkSession]
     @Query(sort: \Workplace.name) private var workplaces: [Workplace]
+    @Query private var vacationDays: [VacationDay]
     @AppStorage(AppSettings.Key.dailyTargetHours) private var dailyTargetHours = 8.0
     @AppStorage(AppSettings.Key.initialBalanceMinutes) private var initialBalanceMinutes = 0
 
@@ -17,20 +18,24 @@ struct ClockView: View {
         NavigationStack {
             TimelineView(.periodic(from: .now, by: 1)) { context in
                 ScrollView {
-                    VStack(spacing: 24) {
+                    VStack(spacing: 20) {
                         if !monitor.hasAlwaysAuthorization {
                             permissionBanner
                         }
-                        statusCard(now: context.date)
+                        dial(now: context.date)
                         controls
-                        summary(now: context.date)
+                        tiles(now: context.date)
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.bottom, 24)
                 }
             }
+            .background(AppBackground())
             .navigationTitle("Timaro")
         }
     }
+
+    // MARK: Sections
 
     private var permissionBanner: some View {
         Button {
@@ -40,143 +45,179 @@ struct ClockView: View {
                 UIApplication.shared.open(url)
             }
         } label: {
-            Label("Allow location access \"Always\" to clock in automatically.", systemImage: "location.slash")
+            Label("Allow location access \"Always\" to clock in automatically.", systemImage: "location.slash.fill")
                 .font(.subheadline)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
-                .background(.orange.opacity(0.15), in: RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(.plain)
+        .glassCard(cornerRadius: 18, tint: Theme.pause)
     }
 
-    private func statusCard(now: Date) -> some View {
-        VStack(spacing: 8) {
-            if let session = openSession {
-                if let pausedAt = session.pausedAt {
-                    Text("On break since \(pausedAt.formatted(date: .omitted, time: .shortened)) · \(Formatters.duration(now.timeIntervalSince(pausedAt)))")
-                        .font(.subheadline)
-                        .foregroundStyle(.orange)
-                } else {
-                    Text(session.isAutomatic ? LocalizedStringKey("Clocked in automatically") : "Clocked in")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                Text(Formatters.clock(session.duration(now: now)))
-                    .font(.system(size: 56, weight: .semibold, design: .rounded))
-                    .monospacedDigit()
-                    .foregroundStyle(session.isPaused ? .secondary : .primary)
-                Text("\(session.workplace?.name ?? String(localized: "No workplace")) · since \(session.start.formatted(date: .omitted, time: .shortened))")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                if session.breakDuration(now: now) >= 60 {
-                    Text("Breaks: \(Formatters.duration(session.breakDuration(now: now)))")
+    private func dial(now: Date) -> some View {
+        let calendar = Calendar.current
+        let vacationToday = vacationDays.byDay[calendar.startOfDay(for: now)] ?? 0
+        let target = TimeAccount.target(dailyTargetHours * 3600, vacation: vacationToday)
+        let todaySeconds = sessions
+            .filter { calendar.isDate($0.start, inSameDayAs: now) }
+            .reduce(0) { $0 + $1.duration(now: now) }
+        let progress = target > 0 ? todaySeconds / target : (todaySeconds > 0 ? 1 : 0)
+
+        return VStack(spacing: 16) {
+            if vacationToday > 0 {
+                Label(vacationToday >= 1 ? LocalizedStringKey("Vacation today") : "Half day off today",
+                      systemImage: "sun.max.fill")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Theme.pause)
+            }
+
+            ProgressRing(progress: progress) {
+                VStack(spacing: 4) {
+                    statusLine(now: now)
+                    Text(Formatters.clock(openSession?.duration(now: now) ?? todaySeconds))
+                        .font(.system(size: 44, weight: .semibold, design: .rounded))
+                        .monospacedDigit()
+                        .contentTransition(.numericText())
+                        .foregroundStyle(openSession?.isPaused == true ? .secondary : .primary)
+                    Text("Today \(Formatters.duration(todaySeconds)) of \(Formatters.duration(target))")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-            } else {
-                Text("Not clocked in")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                Text("--:--:--")
-                    .font(.system(size: 56, weight: .semibold, design: .rounded))
-                    .foregroundStyle(.tertiary)
-                if !workplaces.isEmpty {
+                .padding(28)
+            }
+            .frame(width: 260, height: 260)
+            .padding(.top, 8)
+
+            Text(todayStatus(worked: todaySeconds, target: target, now: now))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+
+            if let session = openSession {
+                HStack(spacing: 8) {
+                    chip("mappin.circle.fill", session.workplace?.name ?? String(localized: "No workplace"))
+                    chip("clock", session.start.formatted(date: .omitted, time: .shortened))
+                    if session.breakDuration(now: now) >= 60 {
+                        chip("cup.and.saucer.fill", Formatters.duration(session.breakDuration(now: now)))
+                    }
+                }
+            } else if !workplaces.isEmpty {
+                Menu {
                     Picker("Workplace", selection: $selectedWorkplaceID) {
                         Text("No workplace").tag(UUID?.none)
-                        ForEach(workplaces) { workplace in
-                            Text(workplace.name).tag(UUID?.some(workplace.id))
-                        }
+                        ForEach(workplaces) { Text($0.name).tag(UUID?.some($0.id)) }
                     }
-                    .pickerStyle(.menu)
+                } label: {
+                    Label(workplaces.first { $0.id == selectedWorkplaceID }?.name ?? String(localized: "No workplace"),
+                          systemImage: "mappin.circle.fill")
+                        .font(.subheadline.weight(.medium))
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
                 }
+                .glassCapsule()
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 24)
-        .background(.background.secondary, in: RoundedRectangle(cornerRadius: 20))
+        .padding(.vertical, 20)
+        .glassCard(cornerRadius: 32)
+    }
+
+    @ViewBuilder
+    private func statusLine(now: Date) -> some View {
+        if let session = openSession {
+            if let pausedAt = session.pausedAt {
+                Text("On break · \(Formatters.duration(now.timeIntervalSince(pausedAt)))")
+                    .foregroundStyle(Theme.pause)
+            } else {
+                Text(session.isAutomatic ? LocalizedStringKey("Clocked in automatically") : "Clocked in")
+                    .foregroundStyle(Theme.deepSky)
+            }
+        } else {
+            Text("Not clocked in").foregroundStyle(.secondary)
+        }
+    }
+
+    private func chip(_ systemImage: String, _ text: String) -> some View {
+        Label(text, systemImage: systemImage)
+            .font(.caption.weight(.medium))
+            .lineLimit(1)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .glassCapsule()
     }
 
     @ViewBuilder
     private var controls: some View {
-        if let session = openSession {
-            HStack(spacing: 32) {
-                if session.isPaused {
-                    roundButton("Resume", systemImage: "play.fill", color: .green) {
-                        ClockService.shared.endBreak()
+        GlassGroup(spacing: 28) {
+            if let session = openSession {
+                HStack(spacing: 28) {
+                    if session.isPaused {
+                        roundButton("Resume", systemImage: "play.fill", tint: Theme.positive) {
+                            ClockService.shared.endBreak()
+                        }
+                    } else {
+                        roundButton("Break", systemImage: "cup.and.saucer.fill", tint: Theme.pause) {
+                            ClockService.shared.startBreak()
+                        }
                     }
-                } else {
-                    roundButton("Break", systemImage: "cup.and.saucer.fill", color: .orange) {
-                        ClockService.shared.startBreak()
+                    roundButton("Finish", systemImage: "stop.fill", tint: Theme.negative) {
+                        ClockService.shared.clockOut()
                     }
                 }
-                roundButton("Finish", systemImage: "stop.fill", color: .red) {
-                    ClockService.shared.clockOut()
+                .sensoryFeedback(.selection, trigger: session.isPaused)
+            } else {
+                roundButton("Start", systemImage: "play.fill", tint: Theme.deepSky, size: 150) {
+                    let workplace = workplaces.first { $0.id == selectedWorkplaceID }
+                    ClockService.shared.clockIn(at: workplace)
                 }
             }
-            .sensoryFeedback(.selection, trigger: session.isPaused)
-        } else {
-            roundButton("Start", systemImage: "play.fill", color: .green, size: 180) {
-                let workplace = workplaces.first { $0.id == selectedWorkplaceID }
-                ClockService.shared.clockIn(at: workplace)
-            }
-            .sensoryFeedback(.success, trigger: openSessions.count)
         }
+        .sensoryFeedback(.success, trigger: openSessions.count)
+        .animation(.smooth, value: openSession?.isPaused)
+        .animation(.smooth, value: openSessions.count)
     }
 
     private func roundButton(_ title: LocalizedStringKey,
                              systemImage: String,
-                             color: Color,
-                             size: CGFloat = 130,
+                             tint: Color,
+                             size: CGFloat = 116,
                              action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(spacing: 6) {
-                Image(systemName: systemImage).font(.title)
-                Text(title).font(.title3.bold())
+                Image(systemName: systemImage).font(.title2.weight(.semibold))
+                Text(title).font(.headline)
             }
-            .frame(width: size, height: size)
-            .background(color, in: Circle())
             .foregroundStyle(.white)
+            .frame(width: size, height: size)
+            .contentShape(Circle())
         }
         .buttonStyle(.plain)
+        .glassCircle(tint: tint)
     }
 
-    private func summary(now: Date) -> some View {
+    private func tiles(now: Date) -> some View {
         let calendar = Calendar.current
-        let target = dailyTargetHours * 3600
-        let today = sessions.filter { calendar.isDate($0.start, inSameDayAs: now) }
         let week = sessions.filter { calendar.isDate($0.start, equalTo: now, toGranularity: .weekOfYear) }
-        let todaySeconds = today.reduce(0) { $0 + $1.duration(now: now) }
         let weekSeconds = week.reduce(0) { $0 + $1.duration(now: now) }
         let balance = TimeAccount.balance(sessions.map { $0.accountEntry(now: now) },
-                                          target: target,
+                                          target: dailyTargetHours * 3600,
+                                          vacation: vacationDays.byDay,
                                           initial: Double(initialBalanceMinutes * 60))
+        let year = calendar.component(.year, from: now)
+        let vacation = VacationLedger.summary(vacationDays.map(\.ledgerEntry),
+                                              year: year,
+                                              allowance: AppSettings.vacationAllowance(for: year),
+                                              today: now)
 
-        return VStack(spacing: 12) {
-            if target > 0 {
-                VStack(alignment: .leading, spacing: 6) {
-                    ProgressView(value: min(todaySeconds, target), total: target) {
-                        HStack {
-                            Text("Today")
-                            Spacer()
-                            Text("\(Formatters.duration(todaySeconds)) / \(Formatters.duration(target))")
-                                .monospacedDigit()
-                        }
-                        .font(.subheadline)
-                    }
-                    .tint(todaySeconds >= target ? .green : .accentColor)
-                    Text(todayStatus(worked: todaySeconds, target: target, now: now))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                .padding()
-                .background(.background.secondary, in: RoundedRectangle(cornerRadius: 12))
-            }
-
-            HStack {
-                stat("Time account", Formatters.signedDuration(balance),
-                     color: balance < -30 ? .red : (balance > 30 ? .green : .primary))
-                stat("This week", Formatters.duration(weekSeconds))
-            }
+        return LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+            StatTile(title: "Time account", value: Formatters.signedDuration(balance),
+                     systemImage: "hourglass", color: Theme.balanceColor(balance))
+            StatTile(title: "This week", value: Formatters.duration(weekSeconds),
+                     systemImage: "calendar")
+            StatTile(title: "Vacation left", value: Formatters.days(vacation.remaining),
+                     systemImage: "sun.max.fill")
+            StatTile(title: "Vacation taken", value: Formatters.days(vacation.taken),
+                     systemImage: "beach.umbrella.fill")
         }
     }
 
@@ -190,15 +231,5 @@ struct ClockView: View {
             return "\(Formatters.duration(remaining)) to go · target reached at \(finish)"
         }
         return "\(Formatters.duration(remaining)) to go"
-    }
-
-    private func stat(_ title: LocalizedStringKey, _ value: String, color: Color = .primary) -> some View {
-        VStack(spacing: 4) {
-            Text(title).font(.caption).foregroundStyle(.secondary)
-            Text(value).font(.headline).monospacedDigit().foregroundStyle(color)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        .background(.background.secondary, in: RoundedRectangle(cornerRadius: 12))
     }
 }

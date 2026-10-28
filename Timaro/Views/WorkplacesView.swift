@@ -51,10 +51,11 @@ struct WorkplacesView: View {
                         Text("Add the places where you work and Timaro will clock you in and out automatically.")
                     } actions: {
                         Button("Add workplace") { addingNew = true }
-                            .buttonStyle(.borderedProminent)
+                            .prominentButton()
                     }
                 }
             }
+            .screenBackground()
             .navigationTitle("Workplaces")
             .toolbar {
                 Button { addingNew = true } label: { Label("Add workplace", systemImage: "plus") }

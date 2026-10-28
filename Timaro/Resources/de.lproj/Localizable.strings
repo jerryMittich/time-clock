@@ -8,7 +8,8 @@
 "Hands-free time clock" = "Die Stempeluhr, die von selbst stempelt";
 "Add your workplaces on the map." = "Lege deine Arbeitsorte auf der Karte an.";
 "Timaro clocks you in when you arrive and out when you leave." = "Timaro stempelt dich ein, wenn du ankommst, und aus, wenn du gehst.";
-"See hours, overtime and earnings, and export to CSV." = "Behalte Stunden, Überstunden und Verdienst im Blick und exportiere als CSV.";
+"Track breaks, overtime and your time account." = "Erfasse Pausen, Überstunden und dein Stundenkonto.";
+"Plan vacation, including half days." = "Plane deinen Urlaub – auch halbe Tage.";
 "Your data stays on your iPhone." = "Deine Daten bleiben auf deinem iPhone.";
 "To track automatically, allow location access \"Always\" when asked." = "Erlaube für automatisches Stempeln den Standortzugriff \"Immer\", wenn du gefragt wirst.";
 "Get started" = "Los geht's";
@@ -21,14 +22,17 @@
 "Not clocked in" = "Nicht eingestempelt";
 "No workplace" = "Kein Arbeitsort";
 "Workplace" = "Arbeitsort";
-"%@ · since %@" = "%1$@ · seit %2$@";
-"On break since %@ · %@" = "In Pause seit %1$@ · %2$@";
+"On break · %@" = "In Pause · %@";
+"Today %@ of %@" = "Heute %1$@ von %2$@";
+"Vacation today" = "Heute Urlaub";
+"Half day off today" = "Heute halber Tag Urlaub";
+"Vacation left" = "Resturlaub";
+"Vacation taken" = "Urlaub genommen";
 "Breaks: %@" = "Pausen: %@";
 "Start" = "Start";
 "Break" = "Pause";
 "Resume" = "Weiter";
 "Finish" = "Beenden";
-"Today" = "Heute";
 "This week" = "Diese Woche";
 "Time account" = "Stundenkonto";
 "+%@ overtime today" = "+%@ Überstunden heute";
@@ -36,6 +40,26 @@
 "%@ to go" = "Noch %@";
 "Arrived at %@" = "Angekommen: %@";
 "Left %@ · %@" = "%1$@ verlassen · %2$@";
+
+/* Vacation */
+"Vacation" = "Urlaub";
+"1 day" = "1 Tag";
+"%@ days" = "%@ Tage";
+"No vacation yet" = "Noch kein Urlaub eingetragen";
+"Add your days off. Half days are possible too." = "Trage deine freien Tage ein. Halbe Tage sind auch möglich.";
+"Add vacation" = "Urlaub eintragen";
+"days left" = "Tage übrig";
+"Allowance" = "Anspruch";
+"Taken" = "Genommen";
+"Planned" = "Geplant";
+"Allowance %@: %@" = "Urlaubsanspruch %1$@: %2$@";
+"Half day" = "Halber Tag";
+"Full day" = "Ganzer Tag";
+"Half day off" = "Halber Tag Urlaub";
+"From" = "Von";
+"To" = "Bis";
+"Skip weekends" = "Wochenenden auslassen";
+"That is %@ of vacation." = "Das sind %@ Urlaub.";
 
 /* Timesheet */
 "Time above %@ per day is added to the account; shorter days are covered from it." = "Zeit über %@ pro Tag wird dem Stundenkonto gutgeschrieben; kürzere Tage werden daraus ausgeglichen.";

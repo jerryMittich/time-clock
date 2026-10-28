@@ -24,6 +24,12 @@ enum Formatters {
         String(format: "%.2f", seconds / 3600)
     }
 
+    /// "1 day" / "2.5 days", localized.
+    static func days(_ value: Double) -> String {
+        let number = value.formatted(.number.precision(.fractionLength(0...1)))
+        return value == 1 ? String(localized: "1 day") : String(localized: "\(number) days")
+    }
+
     static func currency(_ value: Double) -> String {
         value.formatted(.currency(code: Locale.current.currency?.identifier ?? "EUR"))
     }

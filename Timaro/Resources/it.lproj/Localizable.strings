@@ -8,7 +8,8 @@
 "Hands-free time clock" = "Il cartellino che timbra da solo";
 "Add your workplaces on the map." = "Aggiungi i tuoi luoghi di lavoro sulla mappa.";
 "Timaro clocks you in when you arrive and out when you leave." = "Timaro timbra l'entrata quando arrivi e l'uscita quando te ne vai.";
-"See hours, overtime and earnings, and export to CSV." = "Vedi ore, straordinari e guadagni ed esporta in CSV.";
+"Track breaks, overtime and your time account." = "Registra pause, straordinari e banca ore.";
+"Plan vacation, including half days." = "Pianifica le ferie, anche mezze giornate.";
 "Your data stays on your iPhone." = "I tuoi dati restano sul tuo iPhone.";
 "To track automatically, allow location access \"Always\" when asked." = "Per timbrare in automatico, consenti l'accesso alla posizione \"Sempre\" quando richiesto.";
 "Get started" = "Inizia";
@@ -21,14 +22,17 @@
 "Not clocked in" = "Non in servizio";
 "No workplace" = "Nessun luogo";
 "Workplace" = "Luogo di lavoro";
-"%@ · since %@" = "%1$@ · dalle %2$@";
-"On break since %@ · %@" = "In pausa dalle %1$@ · %2$@";
+"On break · %@" = "In pausa · %@";
+"Today %@ of %@" = "Oggi %1$@ su %2$@";
+"Vacation today" = "Oggi in ferie";
+"Half day off today" = "Oggi mezza giornata di ferie";
+"Vacation left" = "Ferie residue";
+"Vacation taken" = "Ferie godute";
 "Breaks: %@" = "Pause: %@";
 "Start" = "Inizio";
 "Break" = "Pausa";
 "Resume" = "Riprendi";
 "Finish" = "Termina";
-"Today" = "Oggi";
 "This week" = "Settimana";
 "Time account" = "Banca ore";
 "+%@ overtime today" = "+%@ di straordinario oggi";
@@ -36,6 +40,26 @@
 "%@ to go" = "Mancano %@";
 "Arrived at %@" = "Arrivato a %@";
 "Left %@ · %@" = "Uscito da %1$@ · %2$@";
+
+/* Vacation */
+"Vacation" = "Ferie";
+"1 day" = "1 giorno";
+"%@ days" = "%@ giorni";
+"No vacation yet" = "Nessuna ferie inserita";
+"Add your days off. Half days are possible too." = "Inserisci i tuoi giorni liberi. Sono possibili anche mezze giornate.";
+"Add vacation" = "Aggiungi ferie";
+"days left" = "giorni rimasti";
+"Allowance" = "Spettanti";
+"Taken" = "Godute";
+"Planned" = "Pianificate";
+"Allowance %@: %@" = "Ferie spettanti %1$@: %2$@";
+"Half day" = "Mezza giornata";
+"Full day" = "Giornata intera";
+"Half day off" = "Mezza giornata di ferie";
+"From" = "Dal";
+"To" = "Al";
+"Skip weekends" = "Escludi i weekend";
+"That is %@ of vacation." = "Sono %@ di ferie.";
 
 /* Timesheet */
 "Time above %@ per day is added to the account; shorter days are covered from it." = "Il tempo oltre %@ al giorno va nella banca ore; i giorni più corti vengono coperti da essa.";

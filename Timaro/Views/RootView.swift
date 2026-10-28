@@ -11,11 +11,14 @@ struct RootView: View {
                 .tabItem { Label("Clock", systemImage: "clock.fill") }
             TimesheetView()
                 .tabItem { Label("Timesheet", systemImage: "list.bullet.rectangle") }
+            VacationView()
+                .tabItem { Label("Vacation", systemImage: "sun.max.fill") }
             WorkplacesView()
                 .tabItem { Label("Workplaces", systemImage: "mappin.and.ellipse") }
             SettingsView()
                 .tabItem { Label("Settings", systemImage: "gearshape") }
         }
+        .tint(Color.accentColor)
         .onAppear { LocationMonitor.shared.sync(workplaces: workplaces) }
         .onChange(of: workplaces.map(\.syncSignature)) {
             LocationMonitor.shared.sync(workplaces: workplaces)

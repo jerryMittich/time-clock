@@ -83,7 +83,8 @@ struct WorkplaceEditor: View {
                     }
                 }
             }
-            .navigationTitle(workplace == nil ? "New workplace" : "Edit workplace")
+            .screenBackground()
+            .navigationTitle(workplace == nil ? LocalizedStringKey("New workplace") : "Edit workplace")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

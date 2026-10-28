@@ -67,6 +67,7 @@ struct SettingsView: View {
                                    value: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")
                 }
             }
+            .screenBackground()
             .navigationTitle("Settings")
         }
     }

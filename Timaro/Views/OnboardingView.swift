@@ -4,20 +4,26 @@ struct OnboardingView: View {
     var onFinish: () -> Void
 
     var body: some View {
-        VStack(spacing: 28) {
+        VStack(spacing: 24) {
             Spacer()
-            Image(systemName: "location.circle.fill")
-                .font(.system(size: 88))
+            Image(systemName: "clock.badge.checkmark.fill")
+                .symbolRenderingMode(.hierarchical)
+                .font(.system(size: 64))
                 .foregroundStyle(.tint)
+                .frame(width: 128, height: 128)
+                .glassCard(cornerRadius: 64)
             Text("Hands-free time clock")
                 .font(.largeTitle.bold())
                 .multilineTextAlignment(.center)
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 18) {
                 feature("mappin.and.ellipse", "Add your workplaces on the map.")
                 feature("figure.walk.arrival", "Timaro clocks you in when you arrive and out when you leave.")
-                feature("chart.bar.fill", "See hours, overtime and earnings, and export to CSV.")
+                feature("hourglass", "Track breaks, overtime and your time account.")
+                feature("sun.max.fill", "Plan vacation, including half days.")
                 feature("lock.fill", "Your data stays on your iPhone.")
             }
+            .padding(20)
+            .glassCard(cornerRadius: 28)
             Spacer()
             Text("To track automatically, allow location access \"Always\" when asked.")
                 .font(.footnote)
@@ -28,20 +34,24 @@ struct OnboardingView: View {
                 NotificationService.requestAuthorization()
                 onFinish()
             } label: {
-                Text("Get started").frame(maxWidth: .infinity)
+                Text("Get started")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
             }
-            .buttonStyle(.borderedProminent)
+            .prominentButton()
             .controlSize(.large)
         }
         .padding(24)
+        .background(AppBackground())
     }
 
     private func feature(_ icon: String, _ text: LocalizedStringKey) -> some View {
         HStack(spacing: 14) {
             Image(systemName: icon)
-                .font(.title2)
+                .font(.title3)
                 .foregroundStyle(.tint)
-                .frame(width: 36)
+                .frame(width: 32)
             Text(text)
         }
     }

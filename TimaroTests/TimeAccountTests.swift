@@ -100,3 +100,67 @@ final class WorkSessionBreakTests: XCTestCase {
         XCTAssertEqual(session.breakMinutes, 45)
     }
 }
+
+final class VacationTests: XCTestCase {
+    private let hour: TimeInterval = 3600
+    private let target: TimeInterval = 8 * 3600
+    private var calendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Europe/Berlin")!
+        return calendar
+    }()
+
+    private func day(_ month: Int, _ day: Int, year: Int = 2026) -> Date {
+        calendar.date(from: DateComponents(year: year, month: month, day: day))!
+    }
+
+    private func work(_ month: Int, _ d: Int, hours: Double) -> TimeAccount.Entry {
+        TimeAccount.Entry(start: day(month, d).addingTimeInterval(8 * hour), worked: hours * hour, isOpen: false)
+    }
+
+    func testFullVacationDayDoesNotCostTheAccount() {
+        let balance = TimeAccount.balance([], target: target, vacation: [day(10, 26): 1], calendar: calendar)
+        XCTAssertEqual(balance, 0, accuracy: 1)
+        let days = TimeAccount.days([], target: target, vacation: [day(10, 26): 1], calendar: calendar)
+        XCTAssertEqual(days.first?.vacation, 1)
+    }
+
+    func testHalfVacationDayHalvesTheTarget() {
+        // 4 h worked + half a day off = target met.
+        let balance = TimeAccount.balance([work(10, 26, hours: 4)], target: target,
+                                          vacation: [day(10, 26): 0.5], calendar: calendar)
+        XCTAssertEqual(balance, 0, accuracy: 1)
+        // 5 h worked + half a day off = +1 h.
+        let more = TimeAccount.balance([work(10, 26, hours: 5)], target: target,
+                                       vacation: [day(10, 26): 0.5], calendar: calendar)
+        XCTAssertEqual(more, 1 * hour, accuracy: 1)
+    }
+
+    func testWorkOnFullVacationDayIsAllOvertime() {
+        let balance = TimeAccount.balance([work(10, 26, hours: 2)], target: target,
+                                          vacation: [day(10, 26): 1], calendar: calendar)
+        XCTAssertEqual(balance, 2 * hour, accuracy: 1)
+    }
+
+    func testSummarySplitsTakenAndPlanned() {
+        let entries = [
+            VacationLedger.Entry(date: day(3, 2), amount: 1),
+            VacationLedger.Entry(date: day(3, 3), amount: 0.5),
+            VacationLedger.Entry(date: day(12, 22), amount: 1),
+            VacationLedger.Entry(date: day(1, 5, year: 2027), amount: 1)
+        ]
+        let summary = VacationLedger.summary(entries, year: 2026, allowance: 30,
+                                             today: day(10, 28), calendar: calendar)
+        XCTAssertEqual(summary.taken, 1.5)
+        XCTAssertEqual(summary.planned, 1)
+        XCTAssertEqual(summary.remaining, 27.5)
+    }
+
+    func testRangeSkipsWeekends() {
+        // Fri 23 Oct – Tue 27 Oct 2026 → Fri, Mon, Tue.
+        let days = VacationLedger.days(from: day(10, 23), to: day(10, 27), skipWeekends: true, calendar: calendar)
+        XCTAssertEqual(days, [day(10, 23), day(10, 26), day(10, 27)])
+        let all = VacationLedger.days(from: day(10, 23), to: day(10, 27), skipWeekends: false, calendar: calendar)
+        XCTAssertEqual(all.count, 5)
+    }
+}

@@ -45,7 +45,8 @@ struct SessionEditor: View {
                     }
                 }
             }
-            .navigationTitle(session == nil ? "New shift" : "Edit shift")
+            .screenBackground()
+            .navigationTitle(session == nil ? LocalizedStringKey("New shift") : "Edit shift")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

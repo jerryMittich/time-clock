@@ -8,11 +8,13 @@ Timaro is a SwiftUI time clock that clocks you in when you arrive at a workplace
 - **Shift resume**: if you come back within N minutes of leaving (lunch break or GPS jitter), the same shift continues instead of a new one starting.
 - **Manual punch with breaks**: Start in the morning, Break / Resume at lunch, Finish in the evening, with a live timer that stops during breaks.
 - **Time account**: a daily target (8 h by default). Time above it is credited to the account and shorter days are covered from it. Days without shifts are not counted, and a starting balance can be set.
-- **Timesheet**: shifts grouped by week, with breaks, notes and full editing. You can also add shifts by hand.
+- **Vacation**: a yearly allowance, full and half days, date ranges that skip weekends, and an overview of days taken, planned and left. Vacation lowers that day's target in the time account.
+- **Timesheet**: shifts grouped by day, with breaks, notes and full editing. You can also add shifts by hand.
 - **Earnings**: an hourly rate for each workplace.
 - **Punch rounding**: none, 5, 10, 15 or 30 minutes.
 - **CSV export** through the share sheet.
 - **Notifications** on automatic punches.
+- **Design**: Liquid Glass surfaces on iOS 26 (material fallback on iOS 17–18) with a light-blue accent.
 - **Private**: data stays on the device (SwiftData). There is no account and no server.
 
 ## Project layout
@@ -25,7 +27,7 @@ Timaro/Services             ClockService (punch rules), LocationMonitor (geofenc
                             notifications, CSV export, formatters
 Timaro/Views                SwiftUI screens
 Timaro/Resources            Asset catalog and German/Italian strings
-TimaroTests                 Unit tests for the time account and break logic
+TimaroTests                 Unit tests for the time account, breaks and vacation
 ```
 
 ## Build

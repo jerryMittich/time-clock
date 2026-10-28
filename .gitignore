@@ -1,0 +1,9 @@
+*.xcodeproj/
+build/
+DerivedData/
+xcuserdata/
+.DS_Store
+Vivaro/Info.plist
+fastlane/report.xml
+*.ipa
+*.dSYM.zip

@@ -1,0 +1,92 @@
+/* Tabs */
+"Clock" = "Timbra";
+"Timesheet" = "Cartellino";
+"Workplaces" = "Luoghi di lavoro";
+"Settings" = "Impostazioni";
+
+/* Onboarding */
+"Hands-free time clock" = "Il cartellino che timbra da solo";
+"Add your workplaces on the map." = "Aggiungi i tuoi luoghi di lavoro sulla mappa.";
+"Vivaro clocks you in when you arrive and out when you leave." = "Vivaro timbra l'entrata quando arrivi e l'uscita quando te ne vai.";
+"See hours, overtime and earnings, and export to CSV." = "Vedi ore, straordinari e guadagni ed esporta in CSV.";
+"Your data stays on your iPhone." = "I tuoi dati restano sul tuo iPhone.";
+"To track automatically, allow location access \"Always\" when asked." = "Per timbrare in automatico, consenti l'accesso alla posizione \"Sempre\" quando richiesto.";
+"Get started" = "Inizia";
+
+/* Clock */
+"Allow location access \"Always\" to clock in automatically." = "Consenti l'accesso alla posizione \"Sempre\" per timbrare in automatico.";
+"Clocked in automatically" = "Entrata timbrata in automatico";
+"Clocked in" = "Entrata timbrata";
+"Clocked out" = "Uscita timbrata";
+"Not clocked in" = "Non in servizio";
+"No workplace" = "Nessun luogo";
+"Workplace" = "Luogo di lavoro";
+"%@ · since %@" = "%1$@ · dalle %2$@";
+"Clock in" = "Entrata";
+"Clock out" = "Uscita";
+"Today" = "Oggi";
+"This week" = "Settimana";
+"Earned" = "Guadagno";
+"Weekly target" = "Obiettivo settimanale";
+"Overtime %@" = "Straordinario %@";
+"%@ to go" = "Mancano %@";
+"Arrived at %@" = "Arrivato a %@";
+"Left %@ · %@" = "Uscito da %1$@ · %2$@";
+
+/* Timesheet */
+"Week of %@" = "Settimana del %@";
+"No shifts yet" = "Ancora nessun turno";
+"Clock in manually or add a workplace to track automatically." = "Timbra a mano o aggiungi un luogo di lavoro per timbrare in automatico.";
+"Export" = "Esporta";
+"Add shift" = "Aggiungi turno";
+"New shift" = "Nuovo turno";
+"Edit shift" = "Modifica turno";
+"Start" = "Inizio";
+"End" = "Fine";
+"Still clocked in" = "Ancora in servizio";
+"Break: %lld min" = "Pausa: %lld min";
+"Note" = "Nota";
+"Optional" = "Facoltativa";
+"Delete shift" = "Elimina turno";
+"Cancel" = "Annulla";
+"Save" = "Salva";
+
+/* Workplaces */
+"Automatic · %lld m" = "Automatico · %lld m";
+"Manual only" = "Solo manuale";
+"%@/h" = "%@/h";
+"iOS can monitor up to %lld places at once. Only the first %lld are tracked automatically." = "iOS può monitorare al massimo %1$lld luoghi. Solo i primi %2$lld vengono timbrati in automatico.";
+"No workplaces" = "Nessun luogo di lavoro";
+"Add the places where you work and Vivaro will clock you in and out automatically." = "Aggiungi i luoghi in cui lavori e Vivaro timbrerà entrata e uscita in automatico.";
+"Add workplace" = "Aggiungi luogo";
+"New workplace" = "Nuovo luogo";
+"Edit workplace" = "Modifica luogo";
+"Name" = "Nome";
+"Color" = "Colore";
+"Search address" = "Cerca indirizzo";
+"Use current location" = "Usa posizione attuale";
+"Radius: %lld m" = "Raggio: %lld m";
+"Location" = "Posizione";
+"Tap the map to move the pin. A radius of at least 150 m gives the most reliable results." = "Tocca la mappa per spostare il segnaposto. Un raggio di almeno 150 m dà i risultati più affidabili.";
+"Clock in/out automatically" = "Timbra in automatico";
+"Hourly rate" = "Paga oraria";
+
+/* Settings */
+"Automatic tracking" = "Timbratura automatica";
+"Location access" = "Accesso alla posizione";
+"Open iOS Settings" = "Apri Impostazioni iOS";
+"Notify on automatic punches" = "Notifica le timbrature automatiche";
+"Resume shift if back within" = "Riprendi il turno se torni entro";
+"Off" = "No";
+"%lld min" = "%lld min";
+"Round punches to" = "Arrotonda timbrature a";
+"Exact" = "Esatte";
+"Weekly target: %lld h" = "Obiettivo settimanale: %lld h";
+"Data" = "Dati";
+"Export all shifts (CSV)" = "Esporta tutti i turni (CSV)";
+"All data is stored only on this device." = "Tutti i dati sono salvati solo su questo dispositivo.";
+"Version" = "Versione";
+"Always" = "Sempre";
+"While using" = "Durante l'uso";
+"Denied" = "Negato";
+"Not set" = "Non impostato";

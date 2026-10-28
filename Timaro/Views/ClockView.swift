@@ -74,16 +74,23 @@ struct ClockView: View {
             ProgressRing(progress: progress) {
                 VStack(spacing: 4) {
                     statusLine(now: now)
+                        .font(.subheadline)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                     Text(Formatters.clock(openSession?.duration(now: now) ?? todaySeconds))
-                        .font(.system(size: 44, weight: .semibold, design: .rounded))
+                        .font(.system(size: 40, weight: .semibold, design: .rounded))
                         .monospacedDigit()
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                         .contentTransition(.numericText())
                         .foregroundStyle(openSession?.isPaused == true ? .secondary : .primary)
                     Text("Today \(Formatters.duration(todaySeconds)) of \(Formatters.duration(target))")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                 }
-                .padding(28)
+                .padding(.horizontal, 30)
             }
             .frame(width: 260, height: 260)
             .padding(.top, 8)

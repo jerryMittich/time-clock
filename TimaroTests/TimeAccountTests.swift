@@ -1,4 +1,5 @@
 import XCTest
+import SwiftData
 @testable import Timaro
 
 final class TimeAccountTests: XCTestCase {
@@ -280,5 +281,27 @@ final class CSVImporterTests: XCTestCase {
         XCTAssertEqual(CSVImporter.parseDate("07.01.2026", calendar: calendar),
                        calendar.date(from: DateComponents(year: 2026, month: 1, day: 7)))
         XCTAssertNil(CSVImporter.parseDate("", calendar: calendar))
+    }
+}
+
+@MainActor
+final class DeletionTests: XCTestCase {
+    func testDeleteByIdentifierRemovesAndPersists() throws {
+        let container = try ModelContainer(for: Workplace.self, WorkSession.self, VacationDay.self,
+                                           configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+        let context = container.mainContext
+        let keep = VacationDay(date: Date(timeIntervalSinceReferenceDate: 800_000_000))
+        let remove = VacationDay(date: Date(timeIntervalSinceReferenceDate: 800_100_000), isHalfDay: true)
+        context.insert(keep)
+        context.insert(remove)
+        try context.save()
+
+        context.deleteAndSave([remove.persistentModelID])
+
+        // A fresh context sees the saved state, not just the in-memory one.
+        let fresh = ModelContext(container)
+        let remaining = try fresh.fetch(FetchDescriptor<VacationDay>())
+        XCTAssertEqual(remaining.count, 1)
+        XCTAssertEqual(remaining.first?.isHalfDay, false)
     }
 }

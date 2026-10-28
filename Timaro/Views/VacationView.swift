@@ -8,15 +8,16 @@ struct VacationView: View {
     @State private var year = Calendar.current.component(.year, from: .now)
     @State private var allowance = AppSettings.vacationAllowance(for: Calendar.current.component(.year, from: .now))
     @State private var adding = false
-    @State private var deleting: VacationDay?
+    @State private var deleting: VacationItem?
 
     private var daysInYear: [VacationDay] {
         vacationDays.filter { Calendar.current.component(.year, from: $0.date) == year }
     }
 
-    private var months: [(month: Date, days: [VacationDay])] {
+    /// Value snapshots of the year's vacation, grouped by month (newest first).
+    private var months: [(month: Date, days: [VacationItem])] {
         let calendar = Calendar.current
-        let grouped = Dictionary(grouping: daysInYear) {
+        let grouped = Dictionary(grouping: daysInYear.map(VacationItem.init)) {
             calendar.dateInterval(of: .month, for: $0.date)?.start ?? $0.date
         }
         return grouped.keys.sorted(by: >).map { ($0, grouped[$0] ?? []) }
@@ -54,14 +55,14 @@ struct VacationView: View {
                                 .buttonStyle(.plain)
                                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                     Button(role: .destructive) {
-                                        context.deleteAndSave([day])
+                                        context.deleteAndSave([day.id])
                                     } label: {
                                         Label("Delete", systemImage: "trash")
                                     }
                                 }
                                 .contextMenu {
                                     Button(role: .destructive) {
-                                        context.deleteAndSave([day])
+                                        context.deleteAndSave([day.id])
                                     } label: {
                                         Label("Delete", systemImage: "trash")
                                     }
@@ -88,7 +89,7 @@ struct VacationView: View {
                                 titleVisibility: .visible,
                                 presenting: deleting) { day in
                 Button("Delete", role: .destructive) {
-                    context.deleteAndSave([day])
+                    context.deleteAndSave([day.id])
                 }
                 Button("Cancel", role: .cancel) {}
             } message: { day in
@@ -173,8 +174,25 @@ struct VacationView: View {
     }
 }
 
+/// Plain copy of a vacation day for display, so rows never read a deleted model.
+private struct VacationItem: Identifiable, Hashable {
+    let id: PersistentIdentifier
+    let date: Date
+    let isHalfDay: Bool
+    let note: String
+    let amount: Double
+
+    init(_ day: VacationDay) {
+        id = day.persistentModelID
+        date = day.date
+        isHalfDay = day.isHalfDay
+        note = day.note
+        amount = day.amount
+    }
+}
+
 private struct VacationRow: View {
-    let day: VacationDay
+    let day: VacationItem
 
     var body: some View {
         HStack(spacing: 12) {

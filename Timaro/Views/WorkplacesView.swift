@@ -35,7 +35,7 @@ struct WorkplacesView: View {
                     .buttonStyle(.plain)
                 }
                 .onDelete { offsets in
-                    context.deleteAndSave(offsets.map { workplaces[$0] })
+                    context.deleteAndSave(offsets.map { workplaces[$0].persistentModelID })
                 }
                 if workplaces.count > LocationMonitor.maxRegions {
                     Text("iOS can monitor up to \(LocationMonitor.maxRegions) places at once. Only the first \(LocationMonitor.maxRegions) are tracked automatically.")

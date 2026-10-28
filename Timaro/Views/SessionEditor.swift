@@ -16,6 +16,7 @@ struct SessionEditor: View {
     @State private var note = ""
     @State private var workplaceID: UUID?
     @State private var editingBreak = false
+    @State private var deleteOnClose = false
 
     var body: some View {
         NavigationStack {
@@ -52,7 +53,8 @@ struct SessionEditor: View {
                 if let session {
                     Section {
                         Button("Delete shift", role: .destructive) {
-                            context.deleteAndSave([session])
+                            // Delete once the editor is gone, so nothing reads the deleted shift.
+                            deleteOnClose = true
                             dismiss()
                         }
                     }
@@ -70,6 +72,11 @@ struct SessionEditor: View {
                 }
             }
             .onAppear(perform: load)
+            .onDisappear {
+                if deleteOnClose, let session {
+                    context.deleteAndSave([session.persistentModelID])
+                }
+            }
         }
     }
 

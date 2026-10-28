@@ -132,7 +132,7 @@ private struct MonthPage: View {
     }
 
     var body: some View {
-        let sessionsByDay = Dictionary(grouping: sessions) { calendar.startOfDay(for: $0.start) }
+        let sessionsByDay = Dictionary(grouping: sessions.map(SessionItem.init)) { calendar.startOfDay(for: $0.start) }
         let days = daysInMonth
 
         List {
@@ -173,12 +173,16 @@ private struct MonthPage: View {
                             .foregroundStyle(Theme.pause)
                     }
                     ForEach(sessionsByDay[day.date] ?? []) { session in
-                        Button { editing = session } label: { SessionRow(session: session) }
+                        Button {
+                            editing = context.model(for: session.id) as? WorkSession
+                        } label: {
+                            SessionRow(session: session)
+                        }
                             .buttonStyle(.plain)
                             // Long press instead of swipe, so horizontal swipes page between months.
                             .contextMenu {
                                 Button(role: .destructive) {
-                                    context.deleteAndSave([session])
+                                    context.deleteAndSave([session.id])
                                 } label: {
                                     Label("Delete shift", systemImage: "trash")
                                 }
@@ -340,8 +344,35 @@ private struct WeekChartCard: View {
 
 // MARK: - Rows
 
+/// Plain copy of a shift for display, so rows never read a deleted model.
+private struct SessionItem: Identifiable {
+    let id: PersistentIdentifier
+    let start: Date
+    let end: Date?
+    let isAutomatic: Bool
+    let isPaused: Bool
+    let breakMinutes: Int
+    let breakSeconds: TimeInterval
+    let workplaceName: String?
+    let worked: TimeInterval
+    let earned: Double
+
+    init(_ session: WorkSession) {
+        id = session.persistentModelID
+        start = session.start
+        end = session.end
+        isAutomatic = session.isAutomatic
+        isPaused = session.isPaused
+        breakMinutes = session.breakMinutes
+        breakSeconds = session.breakDuration()
+        workplaceName = session.workplace?.name
+        worked = session.duration()
+        earned = session.earnings()
+    }
+}
+
 private struct SessionRow: View {
-    let session: WorkSession
+    let session: SessionItem
 
     var body: some View {
         HStack {
@@ -356,21 +387,21 @@ private struct SessionRow: View {
                     }
                 }
                 if session.breakMinutes > 0 || session.isPaused {
-                    Text("Breaks: \(Formatters.duration(session.breakDuration()))")
+                    Text("Breaks: \(Formatters.duration(session.breakSeconds))")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
-                if let name = session.workplace?.name {
+                if let name = session.workplaceName {
                     Text(name).font(.caption).foregroundStyle(.secondary)
                 }
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 4) {
-                Text(Formatters.duration(session.duration()))
+                Text(Formatters.duration(session.worked))
                     .font(.headline)
                     .monospacedDigit()
-                if session.earnings() > 0 {
-                    Text(Formatters.currency(session.earnings()))
+                if session.earned > 0 {
+                    Text(Formatters.currency(session.earned))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }

@@ -105,6 +105,16 @@ jobs:
             -authenticationKeyID "$ASC_KEY_ID" \
             -authenticationKeyIssuerID "$ASC_ISSUER_ID"
 
+      - name: Show signing logs
+        if: failure() && steps.secrets.outputs.ready == 'true'
+        run: |
+          # Xcode keeps the detailed reason for export/signing failures in these logs.
+          find "$TMPDIR" /var/folders -name '*.xcdistributionlogs' -type d 2>/dev/null | while read -r dir; do
+            for f in "$dir"/IDEDistribution.standard.log "$dir"/IDEDistribution.verbose.log; do
+              [ -f "$f" ] && { echo "=== $f"; grep -iE 'error|fail|profile|capabilit|group|denied|forbidden|401|403' "$f" | tail -80; }
+            done
+          done
+
       - name: Remove API key
         if: always()
         run: rm -rf "$RUNNER_TEMP/keys"

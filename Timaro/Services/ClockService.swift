@@ -101,5 +101,6 @@ final class ClockService {
 
     private func save() {
         do { try context.save() } catch { print("Save failed: \(error)") }
+        WidgetBridge.refresh()
     }
 }

@@ -41,6 +41,12 @@
 "Arrived at %@" = "Angekommen: %@";
 "Left %@ · %@" = "%1$@ verlassen · %2$@";
 
+/* Widget */
+"Your working time today, time account and vacation at a glance." = "Deine Arbeitszeit heute, Stundenkonto und Urlaub auf einen Blick.";
+"On break" = "In Pause";
+"Target reached at" = "Soll erreicht um";
+"Time account %@" = "Stundenkonto %@";
+
 /* Vacation */
 "Vacation" = "Urlaub";
 "1 day" = "1 Tag";

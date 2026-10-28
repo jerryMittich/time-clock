@@ -14,6 +14,7 @@ Timaro is a SwiftUI time clock that clocks you in when you arrive at a workplace
 - **Punch rounding**: none, 5, 10, 15 or 30 minutes.
 - **CSV export** through the share sheet.
 - **Notifications** on automatic punches.
+- **Widgets**: Home Screen (small, medium) and Lock Screen (circular, rectangular, inline) with a live timer, today's progress, time account and vacation left. The app shares a status snapshot with the widget through the App Group `group.com.timaro.timeclock`.
 - **Design**: Liquid Glass surfaces on iOS 26 (material fallback on iOS 17–18) with a light-blue accent.
 - **Private**: data stays on the device (SwiftData). There is no account and no server.
 
@@ -26,7 +27,9 @@ Timaro/Models               SwiftData models (Workplace, WorkSession) and settin
 Timaro/Services             ClockService (punch rules), LocationMonitor (geofences),
                             notifications, CSV export, formatters
 Timaro/Views                SwiftUI screens
-Timaro/Resources            Asset catalog and German/Italian strings
+Timaro/Resources            Asset catalog and permission prompt strings
+TimaroWidget                WidgetKit extension
+Shared                      Code and German/Italian strings used by app and widget
 TimaroTests                 Unit tests for the time account, breaks and vacation
 ```
 

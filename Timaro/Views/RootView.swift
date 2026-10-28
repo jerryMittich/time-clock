@@ -4,6 +4,7 @@ import SwiftData
 struct RootView: View {
     @Query private var workplaces: [Workplace]
     @AppStorage("hasOnboarded") private var hasOnboarded = false
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TabView {
@@ -19,7 +20,14 @@ struct RootView: View {
                 .tabItem { Label("Settings", systemImage: "gearshape") }
         }
         .tint(Color.accentColor)
-        .onAppear { LocationMonitor.shared.sync(workplaces: workplaces) }
+        .onAppear {
+            LocationMonitor.shared.sync(workplaces: workplaces)
+            WidgetBridge.refresh()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            // Edits made in the app (shifts, vacation, settings) reach the widgets on leaving it.
+            if phase != .active { WidgetBridge.refresh() }
+        }
         .onChange(of: workplaces.map(\.syncSignature)) {
             LocationMonitor.shared.sync(workplaces: workplaces)
         }

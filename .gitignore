@@ -7,3 +7,6 @@ Timaro/Info.plist
 fastlane/report.xml
 *.ipa
 *.dSYM.zip
+TimaroWidget/Info.plist
+Timaro/Timaro.entitlements
+TimaroWidget/TimaroWidget.entitlements

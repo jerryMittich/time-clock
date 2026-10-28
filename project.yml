@@ -6,7 +6,7 @@ options:
   developmentLanguage: en
 settings:
   base:
-    MARKETING_VERSION: "1.2.0"
+    MARKETING_VERSION: "1.3.0"
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_VERSION: "5.9"
 targets:
@@ -15,6 +15,13 @@ targets:
     platform: iOS
     sources:
       - path: Timaro
+      - path: Shared
+    dependencies:
+      - target: TimaroWidget
+    entitlements:
+      path: Timaro/Timaro.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.timaro.timeclock]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.timaro.timeclock
@@ -35,6 +42,30 @@ targets:
     scheme:
       testTargets:
         - TimaroTests
+  TimaroWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: TimaroWidget
+      - path: Shared
+    entitlements:
+      path: TimaroWidget/TimaroWidget.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.timaro.timeclock]
+    info:
+      path: TimaroWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Timaro
+        # Must match the app, or App Store Connect warns about mismatched versions.
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.timaro.timeclock.widget
+        TARGETED_DEVICE_FAMILY: "1"
+        SKIP_INSTALL: YES
   TimaroTests:
     type: bundle.unit-test
     platform: iOS

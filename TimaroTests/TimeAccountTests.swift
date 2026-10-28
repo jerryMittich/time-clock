@@ -164,3 +164,38 @@ final class VacationTests: XCTestCase {
         XCTAssertEqual(all.count, 5)
     }
 }
+
+final class WidgetSnapshotTests: XCTestCase {
+    private let start = Date(timeIntervalSinceReferenceDate: 800_000_000)
+
+    private func snapshot(pausedAt: Date? = nil, closedBreak: TimeInterval = 0, closedToday: TimeInterval = 0) -> WidgetSnapshot {
+        WidgetSnapshot(day: Calendar.current.startOfDay(for: start), sessionStart: start, pausedAt: pausedAt,
+                       closedBreakSeconds: closedBreak, todayClosedSeconds: closedToday,
+                       todayTarget: 8 * 3600, balance: 0, vacationRemaining: 0, workplaceName: nil)
+    }
+
+    func testRunningShiftCountsUpWithoutBreaks() {
+        let s = snapshot(closedBreak: 30 * 60, closedToday: 3600)
+        let now = start.addingTimeInterval(3 * 3600)
+        XCTAssertEqual(s.sessionWorked(at: now), 2.5 * 3600, accuracy: 1)
+        XCTAssertEqual(s.todayWorked(at: now), 3.5 * 3600, accuracy: 1)
+        // The timer reference makes Text(.timer) show today's worked time.
+        let timerStart = try! XCTUnwrap(s.todayTimerStart(at: now))
+        XCTAssertEqual(now.timeIntervalSince(timerStart), 3.5 * 3600, accuracy: 1)
+        XCTAssertEqual(s.targetReachedAt(now: now)!.timeIntervalSince(now), 4.5 * 3600, accuracy: 1)
+    }
+
+    func testBreakStopsTheClock() {
+        let s = snapshot(pausedAt: start.addingTimeInterval(2 * 3600))
+        let later = start.addingTimeInterval(5 * 3600)
+        XCTAssertEqual(s.sessionWorked(at: later), 2 * 3600, accuracy: 1)
+        XCTAssertNil(s.todayTimerStart(at: later))
+        XCTAssertTrue(s.isPaused)
+    }
+
+    func testRoundTripThroughJSON() throws {
+        let s = snapshot(closedBreak: 900)
+        let decoded = try JSONDecoder().decode(WidgetSnapshot.self, from: JSONEncoder().encode(s))
+        XCTAssertEqual(decoded, s)
+    }
+}

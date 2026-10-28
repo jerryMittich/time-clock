@@ -69,6 +69,16 @@ jobs:
             CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
             CODE_SIGNING_ALLOWED=NO
 
+      - name: Embed entitlements
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          # The unsigned archive carries no entitlements, but the export keeps the ones it
+          # finds in the binaries. Ad-hoc sign with the App Group so app and widget can share data.
+          APP="$RUNNER_TEMP/Timaro.xcarchive/Products/Applications/Timaro.app"
+          codesign --force --sign - --entitlements TimaroWidget/TimaroWidget.entitlements "$APP/PlugIns/TimaroWidget.appex"
+          codesign --force --sign - --entitlements Timaro/Timaro.entitlements "$APP"
+          codesign -d --entitlements - "$APP/PlugIns/TimaroWidget.appex"
+
       - name: Sign and upload to TestFlight
         if: steps.secrets.outputs.ready == 'true'
         run: |

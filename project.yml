@@ -66,6 +66,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.timaro.timeclock.widget
         TARGETED_DEVICE_FAMILY: "1"
         SKIP_INSTALL: YES
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) TIMARO_WIDGET
   TimaroTests:
     type: bundle.unit-test
     platform: iOS

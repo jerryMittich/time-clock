@@ -30,6 +30,13 @@ final class ClockService {
         return try? context.fetch(descriptor).first
     }
 
+    /// Workplace of the most recent shift, used when starting from the widget.
+    func lastWorkplace() -> Workplace? {
+        var descriptor = FetchDescriptor<WorkSession>(sortBy: [SortDescriptor(\.start, order: .reverse)])
+        descriptor.fetchLimit = 1
+        return (try? context.fetch(descriptor).first)?.workplace
+    }
+
     // MARK: Manual punches
 
     @discardableResult

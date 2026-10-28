@@ -1,3 +1,4 @@
+import AppIntents
 import SwiftUI
 import WidgetKit
 
@@ -171,40 +172,125 @@ struct StatusWidgetView: View {
 
     // MARK: Home Screen
 
-    private var small: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            statusLabel
-            Spacer(minLength: 0)
-            todayTime
-                .font(.system(size: 30, weight: .semibold, design: .rounded))
-                .monospacedDigit()
-                .lineLimit(1)
-                .minimumScaleFactor(0.6)
-            progressBar
+    /// "Since 08:12 · Breaks 0h 30m"
+    @ViewBuilder
+    private var sinceLine: some View {
+        if let sessionStart = snapshot.sessionStart {
+            let breaks = snapshot.closedBreakSeconds
+                + (snapshot.pausedAt.map { entry.date.timeIntervalSince($0) } ?? 0)
+            HStack(spacing: 4) {
+                Text("Since \(sessionStart.formatted(date: .omitted, time: .shortened))")
+                if breaks >= 60 {
+                    Text("·")
+                    Text("Breaks: \(Formatters.duration(breaks))")
+                }
+            }
+            .font(.caption2)
+            .foregroundStyle(.secondary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
+        } else {
             targetLine
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
         }
+    }
+
+    private var small: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            statusLabel
+            Spacer(minLength: 0)
+            todayTime
+                .font(.system(size: 28, weight: .semibold, design: .rounded))
+                .monospacedDigit()
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
+            progressBar
+            Spacer(minLength: 0)
+            actionButtons(compact: true)
+        }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var medium: some View {
-        HStack(spacing: 16) {
-            small
-            VStack(alignment: .leading, spacing: 10) {
-                figure("Time account", Formatters.signedDuration(snapshot.balance),
-                       systemImage: "hourglass", color: Palette.balance(snapshot.balance))
-                figure("Vacation left", Formatters.days(snapshot.vacationRemaining),
-                       systemImage: "sun.max.fill", color: .primary)
-                if let reached = snapshot.targetReachedAt(now: entry.date) {
-                    figure("Target reached at", reached.formatted(date: .omitted, time: .shortened),
-                           systemImage: "flag.checkered", color: .primary)
-                }
+        HStack(spacing: 14) {
+            VStack(alignment: .leading, spacing: 5) {
+                statusLabel
+                Spacer(minLength: 0)
+                todayTime
+                    .font(.system(size: 34, weight: .semibold, design: .rounded))
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                sinceLine
+                progressBar
+                targetLine
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+
+            VStack(alignment: .leading, spacing: 8) {
+                actionButtons(compact: false)
+                Spacer(minLength: 0)
+                figure("Time account", Formatters.signedDuration(snapshot.balance),
+                       systemImage: "hourglass", color: Palette.balance(snapshot.balance))
+            }
+            .frame(width: 118)
         }
+    }
+
+    /// Start · Break/Resume · Finish, depending on the current state.
+    @ViewBuilder
+    private func actionButtons(compact: Bool) -> some View {
+        if !snapshot.isClockedIn {
+            intentButton("Start", systemImage: "play.fill", tint: Palette.deepSky, iconOnly: false,
+                         intent: StartShiftIntent())
+        } else {
+            let layout = compact
+                ? AnyLayout(HStackLayout(spacing: 6))
+                : AnyLayout(VStackLayout(spacing: 6))
+            layout {
+                if snapshot.isPaused {
+                    intentButton("Resume", systemImage: "play.fill", tint: Palette.positive, iconOnly: compact,
+                                 intent: EndBreakIntent())
+                } else {
+                    intentButton("Break", systemImage: "cup.and.saucer.fill", tint: Palette.pause, iconOnly: compact,
+                                 intent: StartBreakIntent())
+                }
+                intentButton("Finish", systemImage: "stop.fill", tint: Palette.negative, iconOnly: compact,
+                             intent: FinishShiftIntent())
+            }
+        }
+    }
+
+    private func intentButton<I: AppIntent>(_ title: LocalizedStringKey,
+                                            systemImage: String,
+                                            tint: Color,
+                                            iconOnly: Bool,
+                                            intent: I) -> some View {
+        Button(intent: intent) {
+            Group {
+                if iconOnly {
+                    Image(systemName: systemImage)
+                        .accessibilityLabel(Text(title))
+                } else {
+                    Label(title, systemImage: systemImage)
+                }
+            }
+            .font(.caption.weight(.semibold))
+            .lineLimit(1)
+            .minimumScaleFactor(0.7)
+            .foregroundStyle(.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 7)
+            .background(tint.gradient, in: Capsule())
+        }
+        .buttonStyle(.plain)
     }
 
     private func figure(_ title: LocalizedStringKey, _ value: String, systemImage: String, color: Color) -> some View {

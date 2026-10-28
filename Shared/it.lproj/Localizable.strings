@@ -46,6 +46,7 @@
 "On break" = "In pausa";
 "Target reached at" = "Obiettivo alle";
 "Time account %@" = "Banca ore %@";
+"Since %@" = "Dalle %@";
 
 /* Vacation */
 "Vacation" = "Ferie";

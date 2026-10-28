@@ -14,7 +14,7 @@ struct OnboardingView: View {
                 .multilineTextAlignment(.center)
             VStack(alignment: .leading, spacing: 16) {
                 feature("mappin.and.ellipse", "Add your workplaces on the map.")
-                feature("figure.walk.arrival", "Vivaro clocks you in when you arrive and out when you leave.")
+                feature("figure.walk.arrival", "Timaro clocks you in when you arrive and out when you leave.")
                 feature("chart.bar.fill", "See hours, overtime and earnings, and export to CSV.")
                 feature("lock.fill", "Your data stays on your iPhone.")
             }

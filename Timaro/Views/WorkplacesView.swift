@@ -48,7 +48,7 @@ struct WorkplacesView: View {
                     ContentUnavailableView {
                         Label("No workplaces", systemImage: "mappin.slash")
                     } description: {
-                        Text("Add the places where you work and Vivaro will clock you in and out automatically.")
+                        Text("Add the places where you work and Timaro will clock you in and out automatically.")
                     } actions: {
                         Button("Add workplace") { addingNew = true }
                             .buttonStyle(.borderedProminent)

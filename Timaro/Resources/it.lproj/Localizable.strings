@@ -7,7 +7,7 @@
 /* Onboarding */
 "Hands-free time clock" = "Il cartellino che timbra da solo";
 "Add your workplaces on the map." = "Aggiungi i tuoi luoghi di lavoro sulla mappa.";
-"Vivaro clocks you in when you arrive and out when you leave." = "Vivaro timbra l'entrata quando arrivi e l'uscita quando te ne vai.";
+"Timaro clocks you in when you arrive and out when you leave." = "Timaro timbra l'entrata quando arrivi e l'uscita quando te ne vai.";
 "See hours, overtime and earnings, and export to CSV." = "Vedi ore, straordinari e guadagni ed esporta in CSV.";
 "Your data stays on your iPhone." = "I tuoi dati restano sul tuo iPhone.";
 "To track automatically, allow location access \"Always\" when asked." = "Per timbrare in automatico, consenti l'accesso alla posizione \"Sempre\" quando richiesto.";
@@ -57,7 +57,7 @@
 "%@/h" = "%@/h";
 "iOS can monitor up to %lld places at once. Only the first %lld are tracked automatically." = "iOS può monitorare al massimo %1$lld luoghi. Solo i primi %2$lld vengono timbrati in automatico.";
 "No workplaces" = "Nessun luogo di lavoro";
-"Add the places where you work and Vivaro will clock you in and out automatically." = "Aggiungi i luoghi in cui lavori e Vivaro timbrerà entrata e uscita in automatico.";
+"Add the places where you work and Timaro will clock you in and out automatically." = "Aggiungi i luoghi in cui lavori e Timaro timbrerà entrata e uscita in automatico.";
 "Add workplace" = "Aggiungi luogo";
 "New workplace" = "Nuovo luogo";
 "Edit workplace" = "Modifica luogo";

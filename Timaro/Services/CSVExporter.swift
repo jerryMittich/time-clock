@@ -22,7 +22,7 @@ enum CSVExporter {
         }
 
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("vivaro-timesheet-\(Int(Date().timeIntervalSince1970)).csv")
+            .appendingPathComponent("timaro-timesheet-\(Int(Date().timeIntervalSince1970)).csv")
         try lines.joined(separator: "\n").write(to: url, atomically: true, encoding: .utf8)
         return url
     }

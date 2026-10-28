@@ -16,7 +16,7 @@ jobs:
       - name: Build for simulator
         run: |
           xcodebuild build \
-            -project Vivaro.xcodeproj \
-            -scheme Vivaro \
+            -project Timaro.xcodeproj \
+            -scheme Timaro \
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO

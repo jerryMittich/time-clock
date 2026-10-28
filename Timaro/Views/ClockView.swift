@@ -27,7 +27,7 @@ struct ClockView: View {
                     .padding()
                 }
             }
-            .navigationTitle("Vivaro")
+            .navigationTitle("Timaro")
         }
     }
 

@@ -1,6 +1,6 @@
-# Vivaro — automatic time clock for iOS
+# Timaro — automatic time clock for iOS
 
-Vivaro is a SwiftUI time clock that clocks you in when you arrive at a workplace and clocks you out when you leave, using iOS geofencing. You can also punch in and out by hand, edit shifts, track hours, overtime and earnings, and export a CSV timesheet. It is localized in English and Italian.
+Timaro is a SwiftUI time clock that clocks you in when you arrive at a workplace and clocks you out when you leave, using iOS geofencing. You can also punch in and out by hand, edit shifts, track hours, overtime and earnings, and export a CSV timesheet. It is localized in English and Italian.
 
 ## Features
 
@@ -17,13 +17,13 @@ Vivaro is a SwiftUI time clock that clocks you in when you arrive at a workplace
 ## Project layout
 
 ```
-project.yml                 XcodeGen spec (generates Vivaro.xcodeproj)
-Vivaro/App                  App entry point and AppDelegate
-Vivaro/Models               SwiftData models (Workplace, WorkSession) and settings
-Vivaro/Services             ClockService (punch rules), LocationMonitor (geofences),
+project.yml                 XcodeGen spec (generates Timaro.xcodeproj)
+Timaro/App                  App entry point and AppDelegate
+Timaro/Models               SwiftData models (Workplace, WorkSession) and settings
+Timaro/Services             ClockService (punch rules), LocationMonitor (geofences),
                             notifications, CSV export, formatters
-Vivaro/Views                SwiftUI screens
-Vivaro/Resources            Asset catalog and Italian strings
+Timaro/Views                SwiftUI screens
+Timaro/Resources            Asset catalog and Italian strings
 ```
 
 ## Build
@@ -33,10 +33,10 @@ Requirements: Xcode 15 or later and iOS 17 or later.
 ```sh
 brew install xcodegen
 xcodegen generate
-open Vivaro.xcodeproj
+open Timaro.xcodeproj
 ```
 
-Set your signing team in the Vivaro target. Change the bundle ID `com.vivaro.timeclock` in `project.yml` if you need to. CI (`.github/workflows/build.yml`) builds the app for the simulator on every push.
+Set your signing team in the Timaro target. Change the bundle ID `com.timaro.timeclock` in `project.yml` if you need to. CI (`.github/workflows/build.yml`) builds the app for the simulator on every push.
 
 ## Uploading to App Store Connect
 

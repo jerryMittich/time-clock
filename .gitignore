@@ -3,7 +3,7 @@ build/
 DerivedData/
 xcuserdata/
 .DS_Store
-Vivaro/Info.plist
+Timaro/Info.plist
 fastlane/report.xml
 *.ipa
 *.dSYM.zip

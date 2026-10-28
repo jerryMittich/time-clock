@@ -44,3 +44,7 @@ Set your signing team in the Timaro target. Change the bundle ID `com.timaro.tim
 2. In Xcode, choose Product → Archive, then Distribute App → App Store Connect.
 3. App Review notes: the app uses **Always** location only to detect when you arrive at or leave a workplace you configured yourself. Explain this in the review notes, and include a short screen recording if review asks for one.
 4. Privacy nutrition label: Location (precise) is used for app functionality only. It is not linked to the user and not used for tracking.
+
+## TestFlight without a Mac
+
+`.github/workflows/testflight.yml` archives, cloud-signs and uploads the app to TestFlight on every push to `main`, using an App Store Connect API key. Setup steps (in German): [docs/TESTFLIGHT.md](docs/TESTFLIGHT.md).

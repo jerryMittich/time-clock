@@ -18,7 +18,7 @@ struct ClockView: View {
         NavigationStack {
             TimelineView(.periodic(from: .now, by: 1)) { context in
                 ScrollView {
-                    VStack(spacing: 20) {
+                    VStack(spacing: 14) {
                         if !monitor.hasAlwaysAuthorization {
                             permissionBanner
                         }
@@ -32,6 +32,7 @@ struct ClockView: View {
             }
             .background(AppBackground())
             .navigationTitle("Timaro")
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 
@@ -63,7 +64,7 @@ struct ClockView: View {
             .reduce(0) { $0 + $1.duration(now: now) }
         let progress = target > 0 ? todaySeconds / target : (todaySeconds > 0 ? 1 : 0)
 
-        return VStack(spacing: 16) {
+        return VStack(spacing: 10) {
             if vacationToday > 0 {
                 Label(vacationToday >= 1 ? LocalizedStringKey("Vacation today") : "Half day off today",
                       systemImage: "sun.max.fill")
@@ -71,14 +72,14 @@ struct ClockView: View {
                     .foregroundStyle(Theme.pause)
             }
 
-            ProgressRing(progress: progress) {
+            ProgressRing(progress: progress, lineWidth: 14) {
                 VStack(spacing: 4) {
                     statusLine(now: now)
                         .font(.subheadline)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     Text(Formatters.clock(openSession?.duration(now: now) ?? todaySeconds))
-                        .font(.system(size: 40, weight: .semibold, design: .rounded))
+                        .font(.system(size: 34, weight: .semibold, design: .rounded))
                         .monospacedDigit()
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
@@ -90,10 +91,9 @@ struct ClockView: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                 }
-                .padding(.horizontal, 30)
+                .padding(.horizontal, 24)
             }
-            .frame(width: 260, height: 260)
-            .padding(.top, 8)
+            .frame(width: 200, height: 200)
 
             Text(todayStatus(worked: todaySeconds, target: target, now: now))
                 .font(.subheadline)
@@ -125,7 +125,7 @@ struct ClockView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
+        .padding(.vertical, 14)
         .glassCard(cornerRadius: 32)
     }
 
@@ -157,7 +157,7 @@ struct ClockView: View {
     private var controls: some View {
         GlassGroup(spacing: 28) {
             if let session = openSession {
-                HStack(spacing: 28) {
+                HStack(spacing: 24) {
                     if session.isPaused {
                         roundButton("Resume", systemImage: "play.fill", tint: Theme.positive) {
                             ClockService.shared.endBreak()
@@ -173,7 +173,7 @@ struct ClockView: View {
                 }
                 .sensoryFeedback(.selection, trigger: session.isPaused)
             } else {
-                roundButton("Start", systemImage: "play.fill", tint: Theme.deepSky, size: 150) {
+                roundButton("Start", systemImage: "play.fill", tint: Theme.deepSky, size: 112) {
                     let workplace = workplaces.first { $0.id == selectedWorkplaceID }
                     ClockService.shared.clockIn(at: workplace)
                 }
@@ -187,7 +187,7 @@ struct ClockView: View {
     private func roundButton(_ title: LocalizedStringKey,
                              systemImage: String,
                              tint: Color,
-                             size: CGFloat = 116,
+                             size: CGFloat = 96,
                              action: @escaping () -> Void) -> some View {
         Button(action: action) {
             VStack(spacing: 6) {
@@ -216,7 +216,7 @@ struct ClockView: View {
                                               allowance: AppSettings.vacationAllowance(for: year),
                                               today: now)
 
-        return LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+        return LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)], spacing: 10) {
             StatTile(title: "Time account", value: Formatters.signedDuration(balance),
                      systemImage: "hourglass", color: Theme.balanceColor(balance))
             StatTile(title: "This week", value: Formatters.duration(weekSeconds),

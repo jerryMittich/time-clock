@@ -156,7 +156,8 @@ struct StatTile: View {
                 .minimumScaleFactor(0.7)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(14)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 11)
         .glassCard(cornerRadius: 20)
     }
 }

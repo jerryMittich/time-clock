@@ -51,7 +51,7 @@ AUTOMATISCH EIN- UND AUSSTEMPELN
 • Kurz weg in der Mittagspause? Kommst du rechtzeitig zurück, läuft dieselbe Schicht weiter
 
 MANUELL STEMPELN MIT PAUSEN
-• Start, Pause, Weiter, Feierabend – mit Live-Timer
+• Start, Pause, Weiter, Beenden – mit Live-Timer
 • Rundung auf 5, 10, 15 oder 30 Minuten
 
 ZEITKONTO & URLAUB
@@ -122,7 +122,8 @@ Note: Automatic punches need "Always" location access. Your location is only use
 
 ## Screenshots
 
-Pflicht: iPhone 6,9″ (1320 × 2868 px, z. B. iPhone 17 Pro Max), 3–10 Bilder. Kleinere Größen erzeugt Apple daraus.
+Pflicht: „iPhone mit Dynamic Island (mittleres Display)“ (1206 × 2622 px, iPhone 17), 3–10 Bilder ohne Transparenz. Andere Größen erzeugt Apple daraus.
+Der Workflow *Screenshots* (Actions → Screenshots → Run workflow) nimmt sie als JPEG auf, Ergebnis im Branch `screenshots`.
 Vorschlag für die Reihenfolge:
 
 1. Stempeluhr mit laufender Schicht (Live-Timer)

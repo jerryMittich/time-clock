@@ -1,8 +1,8 @@
 name: Screenshots
 
 # Takes App Store screenshots in the simulator with sample data (DemoMode.swift),
-# in German and English. Results: the "screenshots" artifact of the run and the
-# "screenshots" branch. Start manually: Actions → Screenshots → Run workflow.
+# in German and English, as JPEG (App Store Connect rejects images with an alpha
+# channel). Results: the "screenshots" artifact of the run and the "screenshots" branch. Start manually: Actions → Screenshots → Run workflow.
 
 on:
   workflow_dispatch:
@@ -34,10 +34,13 @@ jobs:
 
       - name: Pick simulator
         run: |
-          # App Store Connect requires 6.9" screenshots (1320 × 2868), e.g. iPhone 17 Pro Max.
+          # App Store Connect requires "iPhone with Dynamic Island (medium display)"
+          # (1206 × 2622), i.e. the plain iPhone 17; fall back to the newest plain iPhone N.
           UDID=$(xcrun simctl list devices available -j | jq -r '
             [.devices | to_entries[] | select(.key | contains("iOS")) | .value[]
-             | select(.name | test("Pro Max$"))] | sort_by(.name) | last | .udid')
+             | select(.name | test("^iPhone [0-9]+$"))]
+            | (map(select(.name == "iPhone 17")) + (sort_by(.name | ltrimstr("iPhone ") | tonumber) | reverse))
+            | first | .udid')
           xcrun simctl list devices | grep "$UDID"
           echo "UDID=$UDID" >> "$GITHUB_ENV"
 
@@ -73,11 +76,13 @@ jobs:
               -demoMode -hasOnboarded YES -AppleLanguages "($lang)" -AppleLocale "$locale" "$@"
             sleep "$wait"
             mkdir -p "screenshots/$lang"
-            xcrun simctl io "$UDID" screenshot "screenshots/$lang/$file.png"
+            xcrun simctl io "$UDID" screenshot "$RUNNER_TEMP/shot.png"
+            # JPEG has no alpha channel.
+            sips -s format jpeg -s formatOptions best "$RUNNER_TEMP/shot.png" --out "screenshots/$lang/$file.jpg" >/dev/null
           }
           # Warm-up launch: the first start after install is slow.
           shoot de de_DE warmup 15 -demoTab 0
-          rm screenshots/de/warmup.png
+          rm screenshots/de/warmup.jpg
 
           for spec in "de de_DE" "en en_US"; do
             set -- $spec
@@ -87,7 +92,7 @@ jobs:
             shoot "$1" "$2" 4-vacation   6  -demoTab 2
             shoot "$1" "$2" 5-settings   6  -demoTab 4
           done
-          sips -g pixelWidth -g pixelHeight screenshots/de/1-clock.png
+          sips -g pixelWidth -g pixelHeight -g hasAlpha screenshots/de/1-clock.jpg
 
       - uses: actions/upload-artifact@v4
         with:

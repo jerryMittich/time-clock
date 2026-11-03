@@ -6,6 +6,7 @@ import SwiftData
 ///
 /// - `-demoTab N` opens tab N (0 Clock, 1 Timesheet, 2 Vacation, 3 Workplaces, 4 Settings).
 /// - `-demoEditWorkplace` opens the first workplace in the editor (map with radius).
+/// - The timesheet starts on last month.
 ///
 /// Demo data lives in memory only, so the real store is never touched.
 enum DemoMode {
@@ -19,6 +20,13 @@ enum DemoMode {
 
     static var initialTab: Int {
         isActive ? UserDefaults.standard.integer(forKey: "demoTab") : 0
+    }
+
+    /// Last month, which is complete, so the timesheet doesn't look empty early in a month.
+    static var initialTimesheetMonth: Date? {
+        guard isActive else { return nil }
+        let thisMonth = Periods.startOfMonth(.now)
+        return Calendar.current.date(byAdding: .month, value: -1, to: thisMonth)
     }
 
     static var opensWorkplaceEditor: Bool {

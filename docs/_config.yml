@@ -1,0 +1,8 @@
+# GitHub Pages (Settings → Pages → Branch: main, Folder: /docs)
+title: Timaro
+description: Automatische Stempeluhr für das iPhone
+theme: jekyll-theme-primer
+# Internal docs, not part of the public site
+exclude:
+  - TESTFLIGHT.md
+  - APP_STORE.md

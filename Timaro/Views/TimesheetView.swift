@@ -9,7 +9,7 @@ struct TimesheetView: View {
     @State private var editing: WorkSession?
     @State private var addingNew = false
     @State private var exportURL: URL?
-    @State private var selectedMonth = Periods.startOfMonth(.now)
+    @State private var selectedMonth = DemoMode.initialTimesheetMonth ?? Periods.startOfMonth(.now)
     @AppStorage(AppSettings.Key.dailyTargetHours) private var dailyTargetHours = 8.0
     @AppStorage(AppSettings.Key.initialBalanceMinutes) private var initialBalanceMinutes = 0
 

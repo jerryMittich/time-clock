@@ -26,8 +26,9 @@ struct WorkplaceEditor: View {
                     TextField("Name", text: $name)
                     Picker("Color", selection: $colorName) {
                         ForEach(Color.workplacePalette, id: \.self) { name in
-                            Image(systemName: "circle.fill")
-                                .foregroundStyle(Color.named(name))
+                            // Segmented pickers draw images as templates; bake the color in.
+                            Image(uiImage: UIImage(systemName: "circle.fill")!
+                                .withTintColor(UIColor(Color.named(name)), renderingMode: .alwaysOriginal))
                                 .tag(name)
                         }
                     }

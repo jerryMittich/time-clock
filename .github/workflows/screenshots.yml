@@ -73,17 +73,25 @@ jobs:
         run: |
           shoot() {  # language locale file wait args...
             local lang=$1 locale=$2 file=$3 wait=$4; shift 4
-            # Quit first and give SpringBoard a moment; relaunching right away sometimes
-            # left the Home Screen or a blank launch screen in the shot.
-            xcrun simctl terminate "$UDID" "$BUNDLE_ID" 2>/dev/null || true
-            sleep 2
-            SIMCTL_CHILD_TZ="$TZ" xcrun simctl launch "$UDID" "$BUNDLE_ID" \
-              -demoMode -hasOnboarded YES -AppleLanguages "($lang)" -AppleLocale "$locale" "$@"
-            sleep "$wait"
+            local out="screenshots/$lang/$file.jpg" attempt
             mkdir -p "screenshots/$lang"
-            xcrun simctl io "$UDID" screenshot "$RUNNER_TEMP/shot.png"
-            # JPEG has no alpha channel.
-            sips -s format jpeg -s formatOptions best "$RUNNER_TEMP/shot.png" --out "screenshots/$lang/$file.jpg" >/dev/null
+            for attempt in 1 2 3; do
+              # Quit first and give SpringBoard a moment; relaunching right away sometimes
+              # left the Home Screen in the shot.
+              xcrun simctl terminate "$UDID" "$BUNDLE_ID" 2>/dev/null || true
+              sleep 2
+              SIMCTL_CHILD_TZ="$TZ" xcrun simctl launch "$UDID" "$BUNDLE_ID" \
+                -demoMode -hasOnboarded YES -AppleLanguages "($lang)" -AppleLocale "$locale" "$@"
+              sleep "$wait"
+              xcrun simctl io "$UDID" screenshot "$RUNNER_TEMP/shot.png"
+              # JPEG has no alpha channel.
+              sips -s format jpeg -s formatOptions best "$RUNNER_TEMP/shot.png" --out "$out" >/dev/null
+              # A blank launch screen compresses to ~0.1 MB, a real screen to over 1 MB.
+              [ "$(stat -f %z "$out")" -gt 500000 ] && return 0
+              echo "::warning::$out looks blank (attempt $attempt), retrying"
+            done
+            echo "::error::$out is still blank after 3 attempts"
+            return 1
           }
           # Warm-up launch: the first start after install is slow.
           shoot de de_DE warmup 15 -demoTab 0

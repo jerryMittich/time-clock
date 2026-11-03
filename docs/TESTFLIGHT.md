@@ -69,4 +69,6 @@ fertig; Apple verarbeitet den Build danach noch 10–30 Minuten.
 Jeder weitere Push auf `main` erzeugt automatisch einen neuen Build (Build-Nummer = Lauf-Nummer
 des Workflows). TestFlight-Builds laufen 90 Tage.
 
+Wie es danach weitergeht bis zur Veröffentlichung im App Store: [APP_STORE.md](APP_STORE.md).
+
 Solange die Secrets fehlen, überspringt der Workflow den Upload einfach (grüner Lauf mit Hinweis).

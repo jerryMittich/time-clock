@@ -50,7 +50,9 @@ Set your signing team in the Timaro target. Change the bundle ID `com.timaro.tim
 1. Create the app in App Store Connect with the same bundle ID.
 2. In Xcode, choose Product → Archive, then Distribute App → App Store Connect.
 3. App Review notes: the app uses **Always** location only to detect when you arrive at or leave a workplace you configured yourself. Explain this in the review notes, and include a short screen recording if review asks for one.
-4. Privacy nutrition label: Location (precise) is used for app functionality only. It is not linked to the user and not used for tracking.
+4. Privacy: the privacy manifest is `Shared/PrivacyInfo.xcprivacy` (bundled into app and widget). No data leaves the device, so the App Store privacy label is "Data Not Collected".
+
+Store texts, review notes and a release checklist (in German): [docs/APP_STORE.md](docs/APP_STORE.md). The privacy policy and support pages in `docs/` are meant for GitHub Pages.
 
 ## TestFlight without a Mac
 

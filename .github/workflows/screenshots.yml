@@ -2,7 +2,8 @@ name: Screenshots
 
 # Takes App Store screenshots in the simulator with sample data (DemoMode.swift),
 # in German and English, as JPEG (App Store Connect rejects images with an alpha
-# channel). Results: the "screenshots" artifact of the run and the "screenshots" branch. Start manually: Actions → Screenshots → Run workflow.
+# channel). Results: the "screenshots" artifact of the run and the "screenshots"
+# branch. Start manually: Actions → Screenshots → Run workflow.
 
 on:
   workflow_dispatch:
@@ -72,7 +73,11 @@ jobs:
         run: |
           shoot() {  # language locale file wait args...
             local lang=$1 locale=$2 file=$3 wait=$4; shift 4
-            SIMCTL_CHILD_TZ="$TZ" xcrun simctl launch --terminate-running-process "$UDID" "$BUNDLE_ID" \
+            # Quit first and give SpringBoard a moment; relaunching right away sometimes
+            # left the Home Screen or a blank launch screen in the shot.
+            xcrun simctl terminate "$UDID" "$BUNDLE_ID" 2>/dev/null || true
+            sleep 2
+            SIMCTL_CHILD_TZ="$TZ" xcrun simctl launch "$UDID" "$BUNDLE_ID" \
               -demoMode -hasOnboarded YES -AppleLanguages "($lang)" -AppleLocale "$locale" "$@"
             sleep "$wait"
             mkdir -p "screenshots/$lang"
@@ -86,11 +91,11 @@ jobs:
 
           for spec in "de de_DE" "en en_US"; do
             set -- $spec
-            shoot "$1" "$2" 1-clock      6  -demoTab 0
-            shoot "$1" "$2" 2-workplace  12 -demoTab 3 -demoEditWorkplace
-            shoot "$1" "$2" 3-timesheet  6  -demoTab 1
-            shoot "$1" "$2" 4-vacation   6  -demoTab 2
-            shoot "$1" "$2" 5-settings   6  -demoTab 4
+            shoot "$1" "$2" 1-clock      10 -demoTab 0
+            shoot "$1" "$2" 2-workplace  14 -demoTab 3 -demoEditWorkplace
+            shoot "$1" "$2" 3-timesheet  10 -demoTab 1
+            shoot "$1" "$2" 4-vacation   10 -demoTab 2
+            shoot "$1" "$2" 5-settings   10 -demoTab 4
           done
           sips -g pixelWidth -g pixelHeight -g hasAlpha screenshots/de/1-clock.jpg
 

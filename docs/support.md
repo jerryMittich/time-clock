@@ -2,7 +2,7 @@
 
 [English version below](#english)
 
-Fragen, Probleme oder Ideen? Schreib an **[privacy@ivelo.app](mailto:privacy@ivelo.app)** oder eröffne ein [Issue auf GitHub](https://github.com/jerryMittich/time-clock/issues).
+Fragen, Probleme oder Ideen? Schreib an **[support@ivelo.app](mailto:support@ivelo.app)** oder eröffne ein [Issue auf GitHub](https://github.com/jerryMittich/time-clock/issues).
 
 Hilfreich sind dabei: iPhone-Modell, iOS-Version, Timaro-Version (Einstellungen → Version) und eine kurze Beschreibung, was passiert ist.
 
@@ -37,7 +37,7 @@ Datenschutz: [Datenschutzerklärung](privacy.html)
 <a id="english"></a>
 # Timaro Support
 
-Questions, problems or ideas? Email **[privacy@ivelo.app](mailto:privacy@ivelo.app)** or open an [issue on GitHub](https://github.com/jerryMittich/time-clock/issues).
+Questions, problems or ideas? Email **[support@ivelo.app](mailto:support@ivelo.app)** or open an [issue on GitHub](https://github.com/jerryMittich/time-clock/issues).
 
 Please include your iPhone model, iOS version, Timaro version (Settings → Version) and a short description of what happened.
 

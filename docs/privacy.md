@@ -8,10 +8,10 @@ Timaro hat **keinen Server, kein Benutzerkonto, keine Werbung, keine Analyse- od
 
 ## Verantwortlicher
 
-[Vorname Nachname]
-[Straße Hausnummer]
-[PLZ Ort, Land]
-E-Mail: [E-Mail-Adresse]
+Jerome Mittich  
+Via Giuseppe-Verdi 21  
+39031 Bruneck/Brunico (BZ), Italien  
+E-Mail: [privacy@ivelo.app](mailto:privacy@ivelo.app)
 
 ## Welche Daten die App verarbeitet
 
@@ -35,7 +35,7 @@ Die Verarbeitung auf deinem Gerät dient allein der Bereitstellung der von dir g
 
 ## Deine Rechte
 
-Du hast nach der DSGVO das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch. Da wir keine personenbezogenen Daten von dir erhalten, kannst du diese Rechte direkt in der App ausüben (Daten ansehen, bearbeiten, exportieren, löschen). Bei Fragen kannst du uns jederzeit unter der oben genannten Adresse kontaktieren. Außerdem hast du das Recht, dich bei einer Datenschutz-Aufsichtsbehörde zu beschweren.
+Du hast nach der DSGVO das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch. Da wir keine personenbezogenen Daten von dir erhalten, kannst du diese Rechte direkt in der App ausüben (Daten ansehen, bearbeiten, exportieren, löschen). Bei Fragen kannst du uns jederzeit unter der oben genannten Adresse kontaktieren. Außerdem hast du das Recht, dich bei einer Datenschutz-Aufsichtsbehörde zu beschweren, in Italien beim [Garante per la protezione dei dati personali](https://www.garanteprivacy.it).
 
 ## Kinder
 
@@ -58,10 +58,10 @@ Timaro has **no server, no user account, no ads, and no analytics or tracking se
 
 ## Controller
 
-[First name Last name]
-[Street, number]
-[Postcode, city, country]
-Email: [email address]
+Jerome Mittich  
+Via Giuseppe-Verdi 21  
+39031 Brunico (BZ), Italy  
+Email: [privacy@ivelo.app](mailto:privacy@ivelo.app)
 
 ## What data the app processes
 
@@ -85,7 +85,7 @@ Processing on your device serves only to provide the app features you use (Art. 
 
 ## Your rights
 
-Under the GDPR you have the right to access, rectification, erasure, restriction of processing, data portability and objection. Because we receive no personal data from you, you can exercise these rights directly in the app (view, edit, export, delete your data). For questions, contact us at the address above. You also have the right to lodge a complaint with a data protection supervisory authority.
+Under the GDPR you have the right to access, rectification, erasure, restriction of processing, data portability and objection. Because we receive no personal data from you, you can exercise these rights directly in the app (view, edit, export, delete your data). For questions, contact us at the address above. You also have the right to lodge a complaint with a data protection supervisory authority; in Italy this is the [Garante per la protezione dei dati personali](https://www.garanteprivacy.it).
 
 ## Children
 

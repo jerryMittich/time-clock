@@ -1,13 +1,11 @@
 # Timaro im App Store veröffentlichen
 
 Texte und Angaben für App Store Connect zum Kopieren, dazu eine Checkliste.
-Platzhalter in eckigen Klammern (`[…]`) müssen noch ersetzt werden.
 
 ## Checkliste
 
 - [ ] TestFlight-Setup aus [TESTFLIGHT.md](TESTFLIGHT.md) erledigt, ein Build ist in App Store Connect angekommen
 - [ ] App Group `group.com.timaro.timeclock` unter *Identifiers → App Groups* registriert und den App-IDs `com.timaro.timeclock` und `com.timaro.timeclock.widget` zugewiesen (falls der Build oder das Widget daran scheitert)
-- [ ] Platzhalter (Name, Anschrift, E-Mail) in `docs/privacy.md` und `docs/support.md` ersetzt
 - [ ] GitHub Pages eingeschaltet: *Settings → Pages → Deploy from a branch → `main` / `/docs`* (bei privaten Repos nur mit GitHub Pro; sonst Repo öffentlich machen oder die Seiten woanders hosten)
 - [ ] Seiten erreichbar: `https://jerrymittich.github.io/time-clock/privacy.html` und `…/support.html`
 - [ ] *Business* → Vertrag „Kostenlose Apps“ akzeptiert (bei Bezahl-App: Bank- und Steuerdaten)
@@ -27,7 +25,7 @@ Platzhalter in eckigen Klammern (`[…]`) müssen noch ersetzt werden.
 | Datenschutzrichtlinie-URL | `https://jerrymittich.github.io/time-clock/privacy.html` |
 | Support-URL | `https://jerrymittich.github.io/time-clock/support.html` |
 | Marketing-URL (optional) | `https://jerrymittich.github.io/time-clock/` |
-| Copyright | `2026 [Vorname Nachname]` |
+| Copyright | `2026 Jerome Mittich` |
 | Preis | Kostenlos (oder Preisstufe nach Wahl) |
 
 ### Werbetext DE (max. 170, jederzeit änderbar)

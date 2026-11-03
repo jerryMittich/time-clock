@@ -1,0 +1,106 @@
+name: Screenshots
+
+# Takes App Store screenshots in the simulator with sample data (DemoMode.swift),
+# in German and English. Results: the "screenshots" artifact of the run and the
+# "screenshots" branch. Start manually: Actions → Screenshots → Run workflow.
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/screenshots.yml
+      - Timaro/Services/DemoMode.swift
+
+permissions:
+  contents: write
+
+jobs:
+  screenshots:
+    runs-on: macos-26
+    env:
+      BUNDLE_ID: com.timaro.timeclock
+      # Sample workplace, so the map shows the user next to it.
+      LOCATION: "46.4983,11.3548"
+      TZ: Europe/Rome
+    steps:
+      - uses: actions/checkout@v5
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Pick simulator
+        run: |
+          # App Store Connect requires 6.9" screenshots (1320 × 2868), e.g. iPhone 17 Pro Max.
+          UDID=$(xcrun simctl list devices available -j | jq -r '
+            [.devices | to_entries[] | select(.key | contains("iOS")) | .value[]
+             | select(.name | test("Pro Max$"))] | sort_by(.name) | last | .udid')
+          xcrun simctl list devices | grep "$UDID"
+          echo "UDID=$UDID" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: |
+          xcodebuild build \
+            -project Timaro.xcodeproj \
+            -scheme Timaro \
+            -configuration Debug \
+            -destination "id=$UDID" \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Prepare simulator
+        run: |
+          xcrun simctl boot "$UDID"
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl ui "$UDID" appearance light
+          xcrun simctl install "$UDID" build/Build/Products/Debug-iphonesimulator/Timaro.app
+          xcrun simctl privacy "$UDID" grant location-always "$BUNDLE_ID"
+          xcrun simctl location "$UDID" set "$LOCATION"
+          xcrun simctl status_bar "$UDID" override \
+            --time "$(date +%H:%M)" \
+            --dataNetwork wifi --wifiMode active --wifiBars 3 \
+            --cellularMode active --cellularBars 4 --operatorName "" \
+            --batteryState charged --batteryLevel 100
+
+      - name: Take screenshots
+        run: |
+          shoot() {  # language locale file wait args...
+            local lang=$1 locale=$2 file=$3 wait=$4; shift 4
+            SIMCTL_CHILD_TZ="$TZ" xcrun simctl launch --terminate-running-process "$UDID" "$BUNDLE_ID" \
+              -demoMode -hasOnboarded YES -AppleLanguages "($lang)" -AppleLocale "$locale" "$@"
+            sleep "$wait"
+            mkdir -p "screenshots/$lang"
+            xcrun simctl io "$UDID" screenshot "screenshots/$lang/$file.png"
+          }
+          # Warm-up launch: the first start after install is slow.
+          shoot de de_DE warmup 15 -demoTab 0
+          rm screenshots/de/warmup.png
+
+          for spec in "de de_DE" "en en_US"; do
+            set -- $spec
+            shoot "$1" "$2" 1-clock      6  -demoTab 0
+            shoot "$1" "$2" 2-workplace  12 -demoTab 3 -demoEditWorkplace
+            shoot "$1" "$2" 3-timesheet  6  -demoTab 1
+            shoot "$1" "$2" 4-vacation   6  -demoTab 2
+            shoot "$1" "$2" 5-settings   6  -demoTab 4
+          done
+          sips -g pixelWidth -g pixelHeight screenshots/de/1-clock.png
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots
+
+      - name: Publish to the screenshots branch
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          cd screenshots
+          git init -q -b screenshots
+          git add .
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -qm "Screenshots for ${GITHUB_SHA::7}"
+          git push -qf "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" screenshots

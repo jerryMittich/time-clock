@@ -62,6 +62,9 @@ struct WorkplacesView: View {
             }
             .sheet(item: $editing) { WorkplaceEditor(workplace: $0) }
             .sheet(isPresented: $addingNew) { WorkplaceEditor(workplace: nil) }
+            .onAppear {
+                if DemoMode.opensWorkplaceEditor { editing = workplaces.first }
+            }
         }
     }
 }

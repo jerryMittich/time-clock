@@ -2,6 +2,7 @@
 
 Der Workflow `.github/workflows/testflight.yml` baut die App bei jedem Push auf `main`
 auf einem Mac in der GitHub-Cloud, signiert sie und lädt sie zu TestFlight hoch.
+Pushes, die nur Doku (`docs/`, `*.md`) oder den Screenshot-Workflow ändern, lösen keinen Build aus.
 Manuell starten geht auch: GitHub → *Actions* → *TestFlight* → *Run workflow*.
 
 Alles Folgende geht im Browser (auch am iPhone/iPad oder Windows-PC).

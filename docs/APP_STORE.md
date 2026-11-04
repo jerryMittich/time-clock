@@ -152,22 +152,49 @@ Bereits erledigt: `ITSAppUsesNonExemptEncryption = NO` steht in `project.yml`, A
 
 ## Notizen für den App-Review (auf Englisch)
 
-Bei *Anmeldung erforderlich* den Haken entfernen. Unter *Notizen*:
+Bei *Anmeldung erforderlich* den Haken entfernen. Unter *Notizen* (deckt die Fragen ab, die App Review
+bei der ersten Einreichung nach Guideline 2.1 „Information Needed“ gestellt hat):
 
 ```
-Timaro is a time clock for employees. It has no account, no server and no network backend; all data is stored on the device with SwiftData.
+1. SCREEN RECORDING
+Attached: recorded on a physical iPhone running the latest iOS. It starts at the Home Screen with launching the app and shows the typical flow: onboarding, location permission, adding a workplace, the automatic clock-in, break/resume/finish, the timesheet, vacation, settings and the widget. The app has no account registration or login, no user-generated content shared with others, and no paid content or In-App Purchases.
 
-Why "Always" location access:
-The core feature is automatic clock-in/clock-out. The user creates a workplace on a map (with a radius of 100–1000 m). Timaro registers it as a region with CLLocationManager region monitoring (geofencing). When the user enters the region, a shift starts; when they leave, it ends. This must work while the app is in the background or not running, which requires "Always" authorization and the "location" background mode. Timaro does not track continuous location, does not store a location history and does not transmit location data. Without "Always" access the app still works with manual punches.
+2. PURPOSE AND TARGET AUDIENCE
+Timaro is a personal time clock for employees and freelancers who want to keep track of their own working hours. It clocks the user in when they arrive at a workplace they set up themselves and out when they leave (iOS region monitoring), so they no longer have to remember to punch in and out. It also tracks breaks, overtime against a daily target (time account), vacation days and earnings, and exports a CSV timesheet. It is a general consumer app for individuals, not a tool for a specific company or organization.
 
-How to test:
-1. Open the Workplaces tab and add a workplace. Use "Use current location" or search for an address, and keep the "Clock in/out automatically" toggle on.
-2. Allow location access "While Using", then "Always" when iOS asks.
-3. Leaving or entering the region creates or ends a shift (visible in the Clock and Timesheet tabs). In the simulator, use Features → Location to move in and out of the region.
-4. Manual punches: Clock tab → Start / Break / Resume / Finish.
-5. Widgets: add the Timaro widget on the Home Screen or Lock Screen; its buttons start and end shifts.
+3. HOW TO USE / TEST THE MAIN FEATURES
+No login, account or sample files are needed.
+- On first launch, tap "Get started" and allow location access (While Using, then Always) and notifications.
+- Workplaces tab: tap +, tap "Use current location" (or search an address), keep "Clock in/out automatically" on, tap Save. Because the device is already inside the region, iOS reports it right away and a shift starts automatically ("Clocked in automatically" on the Clock tab).
+- Clock tab: Break / Resume / Finish. Manual Start works without location access.
+- Timesheet tab: monthly overview, weekly chart; tap a shift to edit it, + to add one, share icon to export CSV.
+- Vacation tab: + to add full or half days.
+- Settings: daily target, rounding, CSV export/import.
+- Home Screen / Lock Screen widget "Timaro" with Start/Break/Finish buttons.
+"Always" location is used only to detect arriving at and leaving workplaces the user created. Location is not stored as a history and never leaves the device.
 
-A short screen recording of the automatic clock-in is attached.
+4. EXTERNAL SERVICES
+None of our own: no server, no backend, no analytics, no ads, no AI services, no payment processor, no authentication service. All data is stored on the device (SwiftData). The app only uses Apple frameworks: Core Location (region monitoring), MapKit (map display and address search, provided by Apple), WidgetKit/App Intents and local notifications.
+
+5. REGIONAL DIFFERENCES
+None. The app works the same in all regions. It is localized in English, German and Italian; currency and date formats follow the device settings.
+
+6. REGULATED INDUSTRY / THIRD-PARTY MATERIAL
+Not applicable. The app does not operate in a regulated industry and contains no protected third-party material.
 ```
 
-> Die Bildschirmaufnahme (30–60 s) kannst du am iPhone mit der Bildschirmaufnahme im Kontrollzentrum machen und unter *Anhang* hochladen.
+### Bildschirmaufnahme
+
+App Review verlangt eine Aufnahme auf einem **echten iPhone mit der neuesten iOS-Version**, die mit dem
+Start der App beginnt. Hochladen unter *Informationen für die App-Prüfung → Anhang* (das Notizfeld nimmt nur Text).
+
+1. Timaro löschen und über TestFlight neu installieren, damit das Onboarding erscheint. „Nicht stören“ einschalten.
+2. Bildschirmaufnahme im Kontrollzentrum starten, auf dem Home-Bildschirm beginnen und Timaro antippen.
+3. „Los geht's“, Standort „Beim Verwenden“ und dann „Immer“ erlauben, Mitteilungen erlauben.
+4. Arbeitsorte → **+** → „Aktuellen Standort verwenden“ → Name → Sichern. Kurz warten: Timaro stempelt automatisch ein.
+5. Stempeln: Pause, Weiter, Beenden.
+6. Kurz durch Zeiten (Schicht antippen), Urlaub (Tag hinzufügen) und Einstellungen.
+7. Zum Schluss das Widget auf dem Home-Bildschirm zeigen.
+
+Etwa 1–2 Minuten. Danach im Resolution Center kurz antworten (z. B. *„Thank you. We added the requested
+information to the App Review notes and attached a screen recording.“*) und erneut einreichen.

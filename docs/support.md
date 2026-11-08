@@ -1,6 +1,6 @@
 # Timaro Support
 
-[English version below](#english)
+[English version below](#english) · [Timaro im App Store](https://apps.apple.com/app/id6827921143)
 
 Fragen, Probleme oder Ideen? Schreib an **[support@ivelo.app](mailto:support@ivelo.app)** oder eröffne ein [Issue auf GitHub](https://github.com/jerryMittich/time-clock/issues).
 
@@ -36,6 +36,8 @@ Datenschutz: [Datenschutzerklärung](privacy.html)
 
 <a id="english"></a>
 # Timaro Support
+
+[Timaro on the App Store](https://apps.apple.com/app/id6827921143)
 
 Questions, problems or ideas? Email **[support@ivelo.app](mailto:support@ivelo.app)** or open an [issue on GitHub](https://github.com/jerryMittich/time-clock/issues).
 

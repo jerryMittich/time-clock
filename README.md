@@ -2,6 +2,8 @@
 
 Timaro is a SwiftUI time clock that clocks you in when you arrive at a workplace and clocks you out when you leave, using iOS geofencing. You can also punch in and out by hand, edit shifts, track hours, overtime and earnings, and export a CSV timesheet. It is localized in English, German and Italian.
 
+**[Download on the App Store](https://apps.apple.com/app/id6827921143)** · [ivelo.app/timaro](https://ivelo.app/timaro/)
+
 ## Features
 
 - **Automatic clock-in/out**: each workplace is a geofence (100–1000 m). It works in the background and after a reboot, because iOS relaunches the app when you cross a region boundary.

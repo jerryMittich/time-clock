@@ -1,5 +1,7 @@
 # Timaro im App Store veröffentlichen
 
+**Veröffentlicht:** https://apps.apple.com/app/id6827921143 (Apple-ID 6827921143) · Website: https://ivelo.app/timaro/
+
 Texte und Angaben für App Store Connect zum Kopieren, dazu eine Checkliste.
 
 ## Checkliste

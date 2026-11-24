@@ -5,6 +5,9 @@ import UniformTypeIdentifiers
 struct SettingsView: View {
     @Environment(\.modelContext) private var context
     @Query private var sessions: [WorkSession]
+    @Query private var workplaces: [Workplace]
+    /// Demo mode opens the workplaces right away for the screenshots.
+    @State private var showsWorkplaces = DemoMode.opensWorkplaceEditor
     @State private var choosingImportFile = false
     @State private var pendingImport: CSVImporter.Parsed?
     @State private var importResult: (imported: Int, skippedExisting: Int)?
@@ -20,6 +23,23 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    NavigationLink {
+                        WorkplacesView()
+                    } label: {
+                        LabeledContent {
+                            Text("\(workplaces.count)")
+                        } label: {
+                            Label("Workplaces", systemImage: "mappin.and.ellipse")
+                        }
+                    }
+                    NavigationLink {
+                        AbsenceReasonsView()
+                    } label: {
+                        Label("Absence reasons", systemImage: "cross.case")
+                    }
+                }
+
                 Section("Automatic tracking") {
                     LabeledContent("Location access", value: authorizationText)
                     if !monitor.hasAlwaysAuthorization {
@@ -80,6 +100,7 @@ struct SettingsView: View {
             }
             .screenBackground()
             .navigationTitle("Settings")
+            .navigationDestination(isPresented: $showsWorkplaces) { WorkplacesView() }
             .fileImporter(isPresented: $choosingImportFile,
                           allowedContentTypes: [.commaSeparatedText, .plainText, .text, .data]) { result in
                 readImportFile(result)

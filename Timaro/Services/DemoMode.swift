@@ -4,8 +4,9 @@ import SwiftData
 /// Sample data for App Store screenshots. Started with the launch argument `-demoMode`
 /// (Debug builds only); see `.github/workflows/screenshots.yml`.
 ///
-/// - `-demoTab N` opens tab N (0 Clock, 1 Timesheet, 2 Vacation, 3 Workplaces, 4 Settings).
-/// - `-demoEditWorkplace` opens the first workplace in the editor (map with radius).
+/// - `-demoTab N` opens tab N (0 Clock, 1 Timesheet, 2 Vacation, 3 Statistics, 4 Settings).
+/// - `-demoEditWorkplace` (with `-demoTab 4`) opens Settings → Workplaces and the first
+///   workplace in the editor (map with radius).
 /// - The timesheet starts on last month.
 ///
 /// Demo data lives in memory only, so the real store is never touched.
@@ -47,7 +48,7 @@ enum DemoMode {
         context.insert(office)
         context.insert(client)
 
-        // Vacation: a summer week, a recent week, a half day and a planned week.
+        // Vacation: a summer week, a recent week, a half day and a planned week; plus sick days.
         var vacationDays = Set<Date>()
         var halfDays = Set<Date>()
         func addWeek(startingDaysFromToday offset: Int, note: String) {
@@ -66,6 +67,16 @@ enum DemoMode {
         if let halfDay = previousWeekday(before: today, daysBack: 9, calendar: calendar) {
             context.insert(VacationDay(date: halfDay, isHalfDay: true, note: text.appointment))
             halfDays.insert(halfDay)
+        }
+        // Two sick days, to show absences other than vacation.
+        if let sickStart = previousWeekday(before: today, daysBack: 50, calendar: calendar),
+           let reason = AppSettings.absenceReasons.first {
+            for offset in 0..<2 {
+                guard let day = calendar.date(byAdding: .day, value: offset, to: sickStart),
+                      !calendar.isDateInWeekend(day), !vacationDays.contains(day) else { continue }
+                context.insert(VacationDay(date: day, reason: reason))
+                vacationDays.insert(day)
+            }
         }
 
         // Finished shifts on weekdays for the last ten weeks.

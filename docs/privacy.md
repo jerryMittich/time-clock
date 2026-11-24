@@ -1,6 +1,6 @@
 # Datenschutzerklärung für Timaro
 
-*Stand: 3. November 2026* · [English version below](#english)
+*Stand: 24. November 2026* · [English version below](#english)
 
 ## Kurz gesagt
 
@@ -15,7 +15,7 @@ E-Mail: [privacy@ivelo.app](mailto:privacy@ivelo.app)
 
 ## Welche Daten die App verarbeitet
 
-**Arbeitszeiten und Einstellungen.** Schichten, Pausen, Notizen, Arbeitsorte (Name, Koordinaten, Radius, Stundensatz), Urlaubstage, Zeitkonto und Einstellungen werden lokal auf deinem Gerät gespeichert. Sie werden nicht an uns oder Dritte übertragen.
+**Arbeitszeiten und Einstellungen.** Schichten, Pausen, Notizen, Arbeitsorte (Name, Koordinaten, Radius, Stundensatz), Urlaubs- und Abwesenheitstage, Zeitkonto und Einstellungen werden lokal auf deinem Gerät gespeichert. Sie werden nicht an uns oder Dritte übertragen.
 
 **Standort.** Für das automatische Ein- und Ausstempeln nutzt Timaro die Geofencing-Funktion von iOS. Dafür fragt die App nach der Berechtigung „Immer“. iOS meldet der App nur, wenn du einen von dir angelegten Arbeitsort betrittst oder verlässt. Timaro speichert keinen Bewegungsverlauf. Gespeichert werden nur die Zeitpunkte deiner Schichten und die Koordinaten der Arbeitsorte, die du selbst festgelegt hast. Du kannst die Berechtigung jederzeit in den iOS-Einstellungen ändern oder entziehen. Manuelles Stempeln funktioniert auch ohne Standortzugriff.
 
@@ -50,7 +50,7 @@ Wenn sich die App so ändert, dass diese Erklärung angepasst werden muss, wird 
 <a id="english"></a>
 # Privacy Policy for Timaro
 
-*Last updated: November 3, 2026*
+*Last updated: November 24, 2026*
 
 ## In short
 
@@ -65,7 +65,7 @@ Email: [privacy@ivelo.app](mailto:privacy@ivelo.app)
 
 ## What data the app processes
 
-**Working hours and settings.** Shifts, breaks, notes, workplaces (name, coordinates, radius, hourly rate), vacation days, time account and settings are stored locally on your device. They are not sent to us or to any third party.
+**Working hours and settings.** Shifts, breaks, notes, workplaces (name, coordinates, radius, hourly rate), vacation and absence days, time account and settings are stored locally on your device. They are not sent to us or to any third party.
 
 **Location.** For automatic clock-in and clock-out, Timaro uses iOS geofencing and asks for "Always" location access. iOS only tells the app when you enter or leave a workplace you created. Timaro does not store a location history. It stores only the times of your shifts and the coordinates of the workplaces you set yourself. You can change or revoke the permission at any time in iOS Settings. Manual clocking works without location access.
 

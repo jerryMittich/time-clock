@@ -9,6 +9,8 @@ enum AppSettings {
         static let dailyTargetHours = "dailyTargetHours"
         /// Starting balance of the time account, in minutes (may be negative).
         static let initialBalanceMinutes = "initialBalanceMinutes"
+        /// Absence reasons other than vacation, e.g. sick leave ([String]).
+        static let absenceReasons = "absenceReasons"
     }
 
     static func registerDefaults() {
@@ -43,6 +45,18 @@ enum AppSettings {
     }
 
     private static func vacationKey(_ year: Int) -> String { "vacationAllowance.\(year)" }
+
+    /// Reasons to choose from when entering a day off that is not vacation.
+    static var absenceReasons: [String] {
+        get {
+            UserDefaults.standard.stringArray(forKey: Key.absenceReasons) ?? [
+                String(localized: "Sick leave"),
+                String(localized: "Paternity leave"),
+                String(localized: "Wedding leave")
+            ]
+        }
+        set { UserDefaults.standard.set(newValue, forKey: Key.absenceReasons) }
+    }
 
     /// Rounds a punch time to the nearest multiple of `roundingMinutes` (0 = no rounding).
     static func rounded(_ date: Date) -> Date {

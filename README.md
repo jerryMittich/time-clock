@@ -10,8 +10,9 @@ Timaro is a SwiftUI time clock that clocks you in when you arrive at a workplace
 - **Shift resume**: if you come back within N minutes of leaving (lunch break or GPS jitter), the same shift continues instead of a new one starting.
 - **Manual punch with breaks**: Start in the morning, Break / Resume at lunch, Finish in the evening, with a live timer that stops during breaks.
 - **Time account**: a daily target (8 h by default). Time above it is credited to the account and shorter days are covered from it. Days without shifts are not counted, and a starting balance can be set.
-- **Vacation**: a yearly allowance, full and half days, date ranges that skip weekends, and an overview of days taken, planned and left. Vacation lowers that day's target in the time account.
-- **Timesheet**: swipe between months; each month shows a weekly bar chart against the daily target (vacation stacked in), a month summary, and the shifts grouped by day, with breaks, notes and full editing. You can also add shifts by hand.
+- **Vacation and absences**: a yearly allowance, full and half days, date ranges that skip weekends, and an overview of days taken, planned and left. Other absences (sick leave, paternity leave, …) use reasons you set up in Settings; they lower that day's target like vacation but don't count against the allowance. Several days can be selected and deleted at once.
+- **Timesheet**: swipe between months; each month shows a weekly bar chart against the daily target (vacation in yellow, other absences in purple), a month summary, and the shifts grouped by day, with breaks, notes and full editing. You can also add shifts by hand.
+- **Statistics**: totals, overtime, work days, average per work day, breaks, earnings and days off for a week, month, year, all time or a custom range, optionally per workplace; hours per day/week/month, average per weekday and share per workplace as charts, plus a list per period.
 - **Earnings**: an hourly rate for each workplace.
 - **Punch rounding**: none, 5, 10, 15 or 30 minutes.
 - **CSV export** through the share sheet, and **CSV import** of daily totals (`Datum;Stunden;Sollstunden;Überstunden;Pause;Abwesenheitstyp`) from other time-clock apps; absence days are skipped and days that already have shifts are left alone.

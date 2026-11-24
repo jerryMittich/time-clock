@@ -100,10 +100,11 @@ jobs:
           for spec in "de de_DE" "en en_US"; do
             set -- $spec
             shoot "$1" "$2" 1-clock      10 -demoTab 0
-            shoot "$1" "$2" 2-workplace  14 -demoTab 3 -demoEditWorkplace
+            shoot "$1" "$2" 2-workplace  14 -demoTab 4 -demoEditWorkplace
             shoot "$1" "$2" 3-timesheet  10 -demoTab 1
             shoot "$1" "$2" 4-vacation   10 -demoTab 2
-            shoot "$1" "$2" 5-settings   10 -demoTab 4
+            shoot "$1" "$2" 5-statistics 10 -demoTab 3
+            shoot "$1" "$2" 6-settings   10 -demoTab 4
           done
           sips -g pixelWidth -g pixelHeight -g hasAlpha screenshots/de/1-clock.jpg
 

@@ -8,6 +8,10 @@ enum Theme {
     static let positive = Color(red: 0.20, green: 0.74, blue: 0.47)
     static let negative = Color(red: 0.94, green: 0.33, blue: 0.31)
     static let pause = Color(red: 1.0, green: 0.62, blue: 0.20)
+    /// Vacation days in charts and lists.
+    static let vacation = Color(red: 1.0, green: 0.80, blue: 0.10)
+    /// Absences other than vacation (sick leave etc.).
+    static let absence = Color(red: 0.62, green: 0.52, blue: 0.95)
 
     static func balanceColor(_ seconds: TimeInterval) -> Color {
         seconds < -30 ? negative : (seconds > 30 ? positive : .primary)

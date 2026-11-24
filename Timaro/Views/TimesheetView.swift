@@ -30,6 +30,7 @@ struct TimesheetView: View {
                                           vacation: vacationDays.byDay,
                                           initial: Double(initialBalanceMinutes * 60))
         let monthList = months
+        let daysOff = vacationDays.infoByDay
 
         NavigationStack {
             VStack(spacing: 0) {
@@ -41,6 +42,7 @@ struct TimesheetView: View {
                         MonthPage(month: month,
                                   sessions: sessions,
                                   accountDays: accountDays,
+                                  daysOff: daysOff,
                                   target: target,
                                   balance: balance,
                                   editing: $editing)
@@ -109,6 +111,7 @@ private struct MonthPage: View {
     let month: Date
     let sessions: [WorkSession]
     let accountDays: [TimeAccount.Day]
+    let daysOff: [Date: DayOffInfo]
     let target: TimeInterval
     let balance: TimeInterval
     @Binding var editing: WorkSession?
@@ -146,6 +149,7 @@ private struct MonthPage: View {
                 Section {
                     WeekChartCard(weekStart: weeks[shownWeekIndex],
                                   accountDays: accountDays,
+                                  daysOff: daysOff,
                                   target: target,
                                   canGoBack: shownWeekIndex > 0,
                                   canGoForward: shownWeekIndex < weeks.count - 1,
@@ -167,10 +171,9 @@ private struct MonthPage: View {
 
             ForEach(days) { day in
                 Section {
-                    if day.vacation > 0 {
-                        Label(day.vacation >= 1 ? LocalizedStringKey("Vacation") : "Half day off",
-                              systemImage: day.vacation >= 1 ? "sun.max.fill" : "sun.haze.fill")
-                            .foregroundStyle(Theme.pause)
+                    if let off = daysOff[day.date], off.total > 0 {
+                        Label(off.title, systemImage: off.systemImage)
+                            .foregroundStyle(off.absence > off.vacation ? Theme.absence : Theme.pause)
                     }
                     ForEach(sessionsByDay[day.date] ?? []) { session in
                         Button {
@@ -232,6 +235,7 @@ private struct MonthSummary: View {
 private struct WeekChartCard: View {
     let weekStart: Date
     let accountDays: [TimeAccount.Day]
+    let daysOff: [Date: DayOffInfo]
     let target: TimeInterval
     let canGoBack: Bool
     let canGoForward: Bool
@@ -241,7 +245,9 @@ private struct WeekChartCard: View {
     private struct Bar: Identifiable {
         var date: Date
         var worked: Double
+        /// Hours of the target covered by vacation and by other absences.
         var vacation: Double
+        var absence: Double
         var metTarget: Bool
         var id: Date { date }
     }
@@ -252,16 +258,20 @@ private struct WeekChartCard: View {
         let targetHours = target / 3600
         let bars: [Bar] = Periods.days(ofWeek: weekStart).map { date in
             let day = byDay[date]
+            let off = daysOff[date] ?? DayOffInfo()
             let worked = (day?.worked ?? 0) / 3600
-            let vacation = (day?.vacation ?? 0) * targetHours
-            let dayTarget = TimeAccount.target(target, vacation: day?.vacation ?? 0) / 3600
-            return Bar(date: date, worked: worked, vacation: vacation,
+            let vacation = min(1, off.vacation) * targetHours
+            let absence = min(1 - min(1, off.vacation), off.absence) * targetHours
+            let dayTarget = TimeAccount.target(target, vacation: off.total) / 3600
+            return Bar(date: date, worked: worked, vacation: vacation, absence: absence,
                        metTarget: worked > 0 && worked + 0.01 >= dayTarget)
         }
         let weekDays = bars.compactMap { byDay[$0.date] }
         let weekWorked = weekDays.reduce(0) { $0 + $1.worked }
         let weekDelta = weekDays.filter { !$0.inProgress }.reduce(0) { $0 + $1.delta }
-        let maxHours = max(targetHours + 1, bars.map { $0.worked + $0.vacation }.max() ?? 0)
+        let maxHours = max(targetHours + 1, bars.map { $0.worked + $0.vacation + $0.absence }.max() ?? 0)
+        let showsVacation = bars.contains { $0.vacation > 0 }
+        let showsAbsence = bars.contains { $0.absence > 0 }
         let weekNumber = calendar.component(.weekOfYear, from: weekStart)
         let weekEnd = calendar.date(byAdding: .day, value: 6, to: weekStart) ?? weekStart
 
@@ -298,7 +308,13 @@ private struct WeekChartCard: View {
                     if bar.vacation > 0 {
                         BarMark(x: .value("Day", bar.date, unit: .day),
                                 y: .value("Hours", bar.vacation))
-                            .foregroundStyle(Theme.pause.opacity(0.55).gradient)
+                            .foregroundStyle(Theme.vacation.gradient)
+                            .cornerRadius(6)
+                    }
+                    if bar.absence > 0 {
+                        BarMark(x: .value("Day", bar.date, unit: .day),
+                                y: .value("Hours", bar.absence))
+                            .foregroundStyle(Theme.absence.gradient)
                             .cornerRadius(6)
                     }
                 }
@@ -326,6 +342,15 @@ private struct WeekChartCard: View {
             }
             .frame(height: 170)
 
+            if showsVacation || showsAbsence {
+                HStack(spacing: 14) {
+                    if showsVacation { legend("Vacation", color: Theme.vacation) }
+                    if showsAbsence { legend("Absence", color: Theme.absence) }
+                }
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            }
+
             HStack {
                 Label(Formatters.duration(weekWorked), systemImage: "clock")
                     .monospacedDigit()
@@ -339,6 +364,15 @@ private struct WeekChartCard: View {
         .padding(16)
         .glassCard(cornerRadius: 26)
         .padding(.vertical, 4)
+    }
+}
+
+private func legend(_ title: LocalizedStringKey, color: Color) -> some View {
+    HStack(spacing: 5) {
+        RoundedRectangle(cornerRadius: 3)
+            .fill(color)
+            .frame(width: 10, height: 10)
+        Text(title)
     }
 }
 

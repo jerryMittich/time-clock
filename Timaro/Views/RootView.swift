@@ -18,8 +18,8 @@ struct RootView: View {
             VacationView()
                 .tabItem { Label("Vacation", systemImage: "sun.max.fill") }
                 .tag(2)
-            WorkplacesView()
-                .tabItem { Label("Workplaces", systemImage: "mappin.and.ellipse") }
+            StatisticsView()
+                .tabItem { Label("Statistics", systemImage: "chart.bar.xaxis") }
                 .tag(3)
             SettingsView()
                 .tabItem { Label("Settings", systemImage: "gearshape") }

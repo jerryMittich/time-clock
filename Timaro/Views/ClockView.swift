@@ -89,7 +89,8 @@ struct ClockView: View {
                         .monospacedDigit()
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
-                        .contentTransition(.numericText())
+                        // Screenshots must not catch a digit mid-animation.
+                        .contentTransition(DemoMode.isActive ? .identity : .numericText())
                         .foregroundStyle(openSession?.isPaused == true ? .secondary : .primary)
                     Text("Today \(Formatters.duration(todaySeconds)) of \(Formatters.duration(target))")
                         .font(.caption)

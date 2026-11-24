@@ -87,12 +87,23 @@ jobs:
               # JPEG has no alpha channel.
               sips -s format jpeg -s formatOptions best "$RUNNER_TEMP/shot.png" --out "$out" >/dev/null
               # A blank launch screen compresses to ~0.1 MB, a real screen to over 1 MB.
-              [ "$(stat -f %z "$out")" -gt 500000 ] && return 0
-              echo "::warning::$out looks blank (attempt $attempt), retrying"
+              # The Home Screen has a size of its own, measured below.
+              local size
+              size=$(stat -f %z "$out")
+              if [ "$size" -gt 500000 ] && { [ -z "$HOME_SIZE" ] || [ $(( (size - HOME_SIZE) * 100 / HOME_SIZE )) -gt 3 ] \
+                   || [ $(( (HOME_SIZE - size) * 100 / HOME_SIZE )) -gt 3 ]; }; then
+                return 0
+              fi
+              echo "::warning::$out looks blank or shows the Home Screen (attempt $attempt), retrying"
             done
-            echo "::error::$out is still blank after 3 attempts"
+            echo "::error::$out is still wrong after 3 attempts"
             return 1
           }
+          # Reference shot of the Home Screen, to recognise shots where the app wasn't in front.
+          xcrun simctl io "$UDID" screenshot "$RUNNER_TEMP/home.png"
+          sips -s format jpeg -s formatOptions best "$RUNNER_TEMP/home.png" --out "$RUNNER_TEMP/home.jpg" >/dev/null
+          HOME_SIZE=$(stat -f %z "$RUNNER_TEMP/home.jpg")
+          echo "Home Screen reference: $HOME_SIZE bytes"
           # Warm-up launch: the first start after install is slow.
           shoot de de_DE warmup 15 -demoTab 0
           rm screenshots/de/warmup.jpg

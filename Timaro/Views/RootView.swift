@@ -31,6 +31,9 @@ struct RootView: View {
             if !DemoMode.isActive { LocationMonitor.shared.sync(workplaces: workplaces) }
             WidgetBridge.refresh()
         }
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            DemoMode.markForeground(phase == .active)
+        }
         .onChange(of: scenePhase) { _, phase in
             // Edits made in the app (shifts, vacation, settings) reach the widgets on leaving it.
             if phase != .active { WidgetBridge.refresh() }

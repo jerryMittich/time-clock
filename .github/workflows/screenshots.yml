@@ -61,6 +61,8 @@ jobs:
           xcrun simctl bootstatus "$UDID" -b
           xcrun simctl ui "$UDID" appearance light
           xcrun simctl install "$UDID" build/Build/Products/Debug-iphonesimulator/Timaro.app
+          # The app keeps this file while it is in front in demo mode (DemoMode.markForeground).
+          echo "FOREGROUND_MARK=$(xcrun simctl get_app_container "$UDID" "$BUNDLE_ID" data)/Documents/demo-foreground" >> "$GITHUB_ENV"
           xcrun simctl privacy "$UDID" grant location-always "$BUNDLE_ID"
           xcrun simctl location "$UDID" set "$LOCATION"
           xcrun simctl status_bar "$UDID" override \
@@ -79,6 +81,7 @@ jobs:
               # Quit first and give SpringBoard a moment; relaunching right away sometimes
               # left the Home Screen in the shot.
               xcrun simctl terminate "$UDID" "$BUNDLE_ID" 2>/dev/null || true
+              rm -f "$FOREGROUND_MARK"
               sleep 2
               SIMCTL_CHILD_TZ="$TZ" xcrun simctl launch "$UDID" "$BUNDLE_ID" \
                 -demoMode -hasOnboarded YES -AppleLanguages "($lang)" -AppleLocale "$locale" "$@"
@@ -86,12 +89,9 @@ jobs:
               xcrun simctl io "$UDID" screenshot "$RUNNER_TEMP/shot.png"
               # JPEG has no alpha channel.
               sips -s format jpeg -s formatOptions best "$RUNNER_TEMP/shot.png" --out "$out" >/dev/null
-              # A blank launch screen compresses to ~0.1 MB, a real screen to over 1 MB.
-              # The Home Screen has a size of its own, measured below.
-              local size
-              size=$(stat -f %z "$out")
-              if [ "$size" -gt 500000 ] && { [ -z "$HOME_SIZE" ] || [ $(( (size - HOME_SIZE) * 100 / HOME_SIZE )) -gt 3 ] \
-                   || [ $(( (HOME_SIZE - size) * 100 / HOME_SIZE )) -gt 3 ]; }; then
+              # The app must be in front (it marks that itself), and a blank launch screen
+              # compresses to ~0.1 MB while a real screen is over 1 MB.
+              if [ -f "$FOREGROUND_MARK" ] && [ "$(stat -f %z "$out")" -gt 500000 ]; then
                 return 0
               fi
               echo "::warning::$out looks blank or shows the Home Screen (attempt $attempt), retrying"
@@ -99,11 +99,6 @@ jobs:
             echo "::error::$out is still wrong after 3 attempts"
             return 1
           }
-          # Reference shot of the Home Screen, to recognise shots where the app wasn't in front.
-          xcrun simctl io "$UDID" screenshot "$RUNNER_TEMP/home.png"
-          sips -s format jpeg -s formatOptions best "$RUNNER_TEMP/home.png" --out "$RUNNER_TEMP/home.jpg" >/dev/null
-          HOME_SIZE=$(stat -f %z "$RUNNER_TEMP/home.jpg")
-          echo "Home Screen reference: $HOME_SIZE bytes"
           # Warm-up launch: the first start after install is slow.
           shoot de de_DE warmup 15 -demoTab 0
           rm screenshots/de/warmup.jpg

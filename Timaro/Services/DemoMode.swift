@@ -30,6 +30,19 @@ enum DemoMode {
         return Calendar.current.date(byAdding: .month, value: -1, to: thisMonth)
     }
 
+    /// While the app is in front in demo mode, this file exists in its Documents folder.
+    /// The screenshot workflow checks it, so it never captures the Home Screen.
+    static func markForeground(_ active: Bool) {
+        guard isActive,
+              let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?
+                .appendingPathComponent("demo-foreground") else { return }
+        if active {
+            try? Data().write(to: url)
+        } else {
+            try? FileManager.default.removeItem(at: url)
+        }
+    }
+
     static var opensWorkplaceEditor: Bool {
         isActive && ProcessInfo.processInfo.arguments.contains("-demoEditWorkplace")
     }

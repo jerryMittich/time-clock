@@ -305,3 +305,138 @@ final class DeletionTests: XCTestCase {
         XCTAssertEqual(remaining.first?.isHalfDay, false)
     }
 }
+
+final class AbsenceTests: XCTestCase {
+    private let day = Date(timeIntervalSinceReferenceDate: 800_000_000)
+
+    func testOnlyVacationCountsAgainstTheAllowance() {
+        let days = [
+            VacationDay(date: day),
+            VacationDay(date: day.addingTimeInterval(86_400), reason: "Sick leave"),
+            VacationDay(date: day.addingTimeInterval(2 * 86_400), isHalfDay: true)
+        ]
+        XCTAssertEqual(days.vacationLedgerEntries.map(\.amount), [1, 0.5])
+        // Every day off still lowers that day's target.
+        XCTAssertEqual(days.byDay.values.reduce(0, +), 2.5)
+    }
+
+    func testInfoSplitsVacationAndAbsence() {
+        let start = Calendar.current.startOfDay(for: day)
+        let info = [VacationDay(date: day, isHalfDay: true),
+                    VacationDay(date: day, isHalfDay: true, reason: "Sick leave")].infoByDay[start]
+        XCTAssertEqual(info?.vacation, 0.5)
+        XCTAssertEqual(info?.absence, 0.5)
+        XCTAssertEqual(info?.total, 1)
+        XCTAssertEqual(info?.reasons, ["Sick leave"])
+    }
+}
+
+final class StatisticsTests: XCTestCase {
+    private let hour: TimeInterval = 3600
+    private var calendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "Europe/Berlin")!
+        calendar.firstWeekday = 2
+        return calendar
+    }()
+
+    private func day(_ d: Int, month: Int = 11) -> Date {
+        calendar.date(from: DateComponents(year: 2026, month: month, day: d))!
+    }
+
+    private func shift(_ d: Int, hours: Double, month: Int = 11, workplace: String? = "Office",
+                       open: Bool = false) -> Statistics.Shift {
+        Statistics.Shift(start: day(d, month: month).addingTimeInterval(8 * hour), worked: hours * hour,
+                         breaks: 0.5 * hour, earned: hours * 20, workplace: workplace, isOpen: open)
+    }
+
+    private var november: DateInterval { calendar.dateInterval(of: .month, for: day(10))! }
+
+    func testTotalsAndOvertimeForTheMonth() {
+        let shifts = [shift(2, hours: 9), shift(3, hours: 7), shift(3, hours: 1, workplace: "Client"),
+                      shift(30, hours: 8, month: 10)]
+        let report = Statistics.report(shifts: shifts, daysOff: [], in: november, dailyTarget: 8 * hour,
+                                       grouping: .day, calendar: calendar)
+        XCTAssertEqual(report.shifts, 3)
+        XCTAssertEqual(report.workDays, 2)
+        XCTAssertEqual(report.worked, 17 * hour, accuracy: 1)
+        XCTAssertEqual(report.delta, 1 * hour, accuracy: 1)
+        XCTAssertEqual(report.breaks, 1.5 * hour, accuracy: 1)
+        XCTAssertEqual(report.earned, 340, accuracy: 0.01)
+        XCTAssertEqual(report.averagePerWorkDay, 8.5 * hour, accuracy: 1)
+        XCTAssertEqual(report.workplaces.map(\.name), ["Office", "Client"])
+    }
+
+    func testDaysOffLowerTheTargetAndAreCountedByReason() {
+        let off = [Statistics.DayOff(date: day(4), amount: 0.5, reason: ""),
+                   Statistics.DayOff(date: day(5), amount: 1, reason: "Sick leave"),
+                   Statistics.DayOff(date: day(6), amount: 1, reason: "")]
+        let report = Statistics.report(shifts: [shift(4, hours: 4)], daysOff: off, in: november,
+                                       dailyTarget: 8 * hour, grouping: .day, calendar: calendar)
+        XCTAssertEqual(report.delta, 0, accuracy: 1)
+        XCTAssertEqual(report.vacation, 1.5)
+        XCTAssertEqual(report.absences, ["Sick leave": 1])
+    }
+
+    func testRunningShiftCountsAsWorkedButNotAsOvertime() {
+        let report = Statistics.report(shifts: [shift(2, hours: 10, open: true)], daysOff: [], in: november,
+                                       dailyTarget: 8 * hour, grouping: .day, calendar: calendar)
+        XCTAssertEqual(report.worked, 10 * hour, accuracy: 1)
+        XCTAssertEqual(report.delta, 0)
+        XCTAssertEqual(report.target, 0)
+    }
+
+    func testGroupsCoverTheWholePeriod() {
+        let days = Statistics.report(shifts: [shift(2, hours: 8)], daysOff: [], in: november,
+                                     dailyTarget: 8 * hour, grouping: .day, calendar: calendar)
+        XCTAssertEqual(days.groups.count, 30)
+        XCTAssertEqual(days.groups.first?.start, day(1))
+        XCTAssertEqual(days.groups[1].worked, 8 * hour, accuracy: 1)
+
+        let year = calendar.dateInterval(of: .year, for: day(10))!
+        let months = Statistics.report(shifts: [shift(2, hours: 8), shift(30, hours: 6, month: 10)], daysOff: [],
+                                       in: year, dailyTarget: 8 * hour, grouping: .month, calendar: calendar)
+        XCTAssertEqual(months.groups.count, 12)
+        XCTAssertEqual(months.groups[9].worked, 6 * hour, accuracy: 1)
+        XCTAssertEqual(months.groups[10].worked, 8 * hour, accuracy: 1)
+    }
+
+    func testWeekdayAveragesStartOnMonday() {
+        // Mon 2 and Mon 9 Nov 2026, Wed 4 Nov.
+        let shifts = [shift(2, hours: 8), shift(9, hours: 6), shift(4, hours: 9)]
+        let report = Statistics.report(shifts: shifts, daysOff: [], in: november, dailyTarget: 8 * hour,
+                                       grouping: .day, calendar: calendar)
+        XCTAssertEqual(report.weekdays.map(\.weekday), [2, 4])
+        XCTAssertEqual(report.weekdays.first?.average ?? 0, 7 * hour, accuracy: 1)
+    }
+
+    func testGroupingDependsOnPeriodLength() {
+        let week = calendar.dateInterval(of: .weekOfYear, for: day(10))!
+        XCTAssertEqual(Statistics.grouping(for: week), .day)
+        XCTAssertEqual(Statistics.grouping(for: november), .day)
+        let quarter = DateInterval(start: day(1, month: 9), end: day(1, month: 12))
+        XCTAssertEqual(Statistics.grouping(for: quarter), .week)
+        XCTAssertEqual(Statistics.grouping(for: calendar.dateInterval(of: .year, for: day(10))!), .month)
+    }
+}
+
+final class StatisticsTagTests: XCTestCase {
+    private let start = Date(timeIntervalSinceReferenceDate: 800_000_000)
+
+    private func shift(hours: Double, tags: [String]) -> Statistics.Shift {
+        Statistics.Shift(start: start, worked: hours * 3600, breaks: 0, earned: 0,
+                         workplace: nil, isOpen: false, tags: tags)
+    }
+
+    func testHoursPerTagCountShiftsForEachOfTheirTags() {
+        let shifts = [shift(hours: 8, tags: ["Home office"]),
+                      shift(hours: 2, tags: ["Home office", "Training"]),
+                      shift(hours: 3, tags: [])]
+        let report = Statistics.report(shifts: shifts, daysOff: [],
+                                       in: DateInterval(start: start.addingTimeInterval(-3600), duration: 86_400),
+                                       dailyTarget: 8 * 3600, grouping: .day)
+        XCTAssertEqual(report.tags.map(\.name), ["Home office", "", "Training"])
+        XCTAssertEqual(report.tags.map(\.worked), [10 * 3600, 3 * 3600, 2 * 3600])
+        XCTAssertEqual(report.worked, 13 * 3600, accuracy: 1)
+    }
+}

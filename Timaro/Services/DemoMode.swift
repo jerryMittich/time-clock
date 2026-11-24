@@ -4,8 +4,9 @@ import SwiftData
 /// Sample data for App Store screenshots. Started with the launch argument `-demoMode`
 /// (Debug builds only); see `.github/workflows/screenshots.yml`.
 ///
-/// - `-demoTab N` opens tab N (0 Clock, 1 Timesheet, 2 Vacation, 3 Workplaces, 4 Settings).
-/// - `-demoEditWorkplace` opens the first workplace in the editor (map with radius).
+/// - `-demoTab N` opens tab N (0 Clock, 1 Timesheet, 2 Vacation, 3 Statistics, 4 Settings).
+/// - `-demoEditWorkplace` (with `-demoTab 4`) opens Settings → Workplaces and the first
+///   workplace in the editor (map with radius).
 /// - The timesheet starts on last month.
 ///
 /// Demo data lives in memory only, so the real store is never touched.
@@ -29,6 +30,19 @@ enum DemoMode {
         return Calendar.current.date(byAdding: .month, value: -1, to: thisMonth)
     }
 
+    /// While the app is in front in demo mode, this file exists in its Documents folder.
+    /// The screenshot workflow checks it, so it never captures the Home Screen.
+    static func markForeground(_ active: Bool) {
+        guard isActive,
+              let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?
+                .appendingPathComponent("demo-foreground") else { return }
+        if active {
+            try? Data().write(to: url)
+        } else {
+            try? FileManager.default.removeItem(at: url)
+        }
+    }
+
     static var opensWorkplaceEditor: Bool {
         isActive && ProcessInfo.processInfo.arguments.contains("-demoEditWorkplace")
     }
@@ -47,7 +61,7 @@ enum DemoMode {
         context.insert(office)
         context.insert(client)
 
-        // Vacation: a summer week, a recent week, a half day and a planned week.
+        // Vacation: a summer week, a recent week, a half day and a planned week; plus sick days.
         var vacationDays = Set<Date>()
         var halfDays = Set<Date>()
         func addWeek(startingDaysFromToday offset: Int, note: String) {
@@ -66,6 +80,16 @@ enum DemoMode {
         if let halfDay = previousWeekday(before: today, daysBack: 9, calendar: calendar) {
             context.insert(VacationDay(date: halfDay, isHalfDay: true, note: text.appointment))
             halfDays.insert(halfDay)
+        }
+        // Two sick days, to show absences other than vacation.
+        if let sickStart = previousWeekday(before: today, daysBack: 50, calendar: calendar),
+           let reason = AppSettings.absenceReasons.first {
+            for offset in 0..<2 {
+                guard let day = calendar.date(byAdding: .day, value: offset, to: sickStart),
+                      !calendar.isDateInWeekend(day), !vacationDays.contains(day) else { continue }
+                context.insert(VacationDay(date: day, reason: reason))
+                vacationDays.insert(day)
+            }
         }
 
         // Finished shifts on weekdays for the last ten weeks.
@@ -87,6 +111,12 @@ enum DemoMode {
                                       isAutomatic: true,
                                       workplace: atClient ? client : office)
             session.closedAutomatically = true
+            // Fridays from home: clocked by hand and tagged.
+            if !atClient, calendar.component(.weekday, from: day) == 6, let homeOffice = AppSettings.tags.first {
+                session.tags = [homeOffice]
+                session.isAutomatic = false
+                session.closedAutomatically = false
+            }
             context.insert(session)
         }
 

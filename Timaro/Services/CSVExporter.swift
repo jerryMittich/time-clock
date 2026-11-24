@@ -6,7 +6,7 @@ enum CSVExporter {
         let dateFormatter = ISO8601DateFormatter()
         dateFormatter.formatOptions = [.withInternetDateTime]
 
-        var lines = ["Workplace,Start,End,Break (min),Hours,Earnings,Automatic,Note"]
+        var lines = ["Workplace,Start,End,Break (min),Hours,Earnings,Automatic,Tags,Note"]
         for session in sessions.sorted(by: { $0.start < $1.start }) {
             let fields = [
                 session.workplace?.name ?? "",
@@ -16,6 +16,7 @@ enum CSVExporter {
                 Formatters.decimalHours(session.duration()),
                 String(format: "%.2f", session.earnings()),
                 session.isAutomatic ? "yes" : "no",
+                session.tags.joined(separator: "; "),
                 session.note
             ]
             lines.append(fields.map(escape).joined(separator: ","))

@@ -18,8 +18,8 @@ struct RootView: View {
             VacationView()
                 .tabItem { Label("Vacation", systemImage: "sun.max.fill") }
                 .tag(2)
-            WorkplacesView()
-                .tabItem { Label("Workplaces", systemImage: "mappin.and.ellipse") }
+            StatisticsView()
+                .tabItem { Label("Statistics", systemImage: "chart.bar.xaxis") }
                 .tag(3)
             SettingsView()
                 .tabItem { Label("Settings", systemImage: "gearshape") }
@@ -30,6 +30,9 @@ struct RootView: View {
             // Demo data must not start real geofences.
             if !DemoMode.isActive { LocationMonitor.shared.sync(workplaces: workplaces) }
             WidgetBridge.refresh()
+        }
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            DemoMode.markForeground(phase == .active)
         }
         .onChange(of: scenePhase) { _, phase in
             // Edits made in the app (shifts, vacation, settings) reach the widgets on leaving it.

@@ -167,7 +167,7 @@ Timaro is a personal time clock for employees and freelancers who want to keep t
 3. HOW TO USE / TEST THE MAIN FEATURES
 No login, account or sample files are needed.
 - On first launch, tap "Get started" and allow location access (While Using, then Always) and notifications.
-- Workplaces tab: tap +, tap "Use current location" (or search an address), keep "Clock in/out automatically" on, tap Save. Because the device is already inside the region, iOS reports it right away and a shift starts automatically ("Clocked in automatically" on the Clock tab).
+- Settings tab → Workplaces: tap +, tap "Use current location" (or search an address), keep "Clock in/out automatically" on, tap Save. Because the device is already inside the region, iOS reports it right away and a shift starts automatically ("Clocked in automatically" on the Clock tab).
 - Clock tab: Break / Resume / Finish. Manual Start works without location access.
 - Timesheet tab: monthly overview, weekly chart; tap a shift to edit it, + to add one, share icon to export CSV.
 - Vacation tab: + to add full or half days.
@@ -193,7 +193,7 @@ Start der App beginnt. Hochladen unter *Informationen für die App-Prüfung → 
 1. Timaro löschen und über TestFlight neu installieren, damit das Onboarding erscheint. „Nicht stören“ einschalten.
 2. Bildschirmaufnahme im Kontrollzentrum starten, auf dem Home-Bildschirm beginnen und Timaro antippen.
 3. „Los geht's“, Standort „Beim Verwenden“ und dann „Immer“ erlauben, Mitteilungen erlauben.
-4. Arbeitsorte → **+** → „Aktuellen Standort verwenden“ → Name → Sichern. Kurz warten: Timaro stempelt automatisch ein.
+4. Einstellungen → Arbeitsorte → **+** → „Aktuellen Standort verwenden“ → Name → Sichern. Kurz warten: Timaro stempelt automatisch ein.
 5. Stempeln: Pause, Weiter, Beenden.
 6. Kurz durch Zeiten (Schicht antippen), Urlaub (Tag hinzufügen) und Einstellungen.
 7. Zum Schluss das Widget auf dem Home-Bildschirm zeigen.

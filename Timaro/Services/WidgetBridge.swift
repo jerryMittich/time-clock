@@ -24,7 +24,7 @@ enum WidgetBridge {
                                           vacation: vacationByDay,
                                           initial: Double(defaults.integer(forKey: AppSettings.Key.initialBalanceMinutes) * 60))
         let year = calendar.component(.year, from: now)
-        let vacationSummary = VacationLedger.summary(vacation.map(\.ledgerEntry),
+        let vacationSummary = VacationLedger.summary(vacation.vacationLedgerEntries,
                                                      year: year,
                                                      allowance: AppSettings.vacationAllowance(for: year),
                                                      today: now)

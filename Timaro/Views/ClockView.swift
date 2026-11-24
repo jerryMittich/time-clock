@@ -65,11 +65,17 @@ struct ClockView: View {
         let progress = target > 0 ? todaySeconds / target : (todaySeconds > 0 ? 1 : 0)
 
         return VStack(spacing: 10) {
-            if vacationToday > 0 {
-                Label(vacationToday >= 1 ? LocalizedStringKey("Vacation today") : "Half day off today",
-                      systemImage: "sun.max.fill")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Theme.pause)
+            if let off = vacationDays.infoByDay[calendar.startOfDay(for: now)], off.total > 0 {
+                Group {
+                    if off.absence > off.vacation {
+                        Label("Today: \(off.title)", systemImage: off.systemImage)
+                    } else {
+                        Label(off.total >= 1 ? LocalizedStringKey("Vacation today") : "Half day off today",
+                              systemImage: off.systemImage)
+                    }
+                }
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(off.absence > off.vacation ? Theme.absence : Theme.pause)
             }
 
             ProgressRing(progress: progress, lineWidth: 14) {
@@ -83,7 +89,8 @@ struct ClockView: View {
                         .monospacedDigit()
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
-                        .contentTransition(.numericText())
+                        // Screenshots must not catch a digit mid-animation.
+                        .contentTransition(DemoMode.isActive ? .identity : .numericText())
                         .foregroundStyle(openSession?.isPaused == true ? .secondary : .primary)
                     Text("Today \(Formatters.duration(todaySeconds)) of \(Formatters.duration(target))")
                         .font(.caption)
@@ -211,7 +218,7 @@ struct ClockView: View {
                                           vacation: vacationDays.byDay,
                                           initial: Double(initialBalanceMinutes * 60))
         let year = calendar.component(.year, from: now)
-        let vacation = VacationLedger.summary(vacationDays.map(\.ledgerEntry),
+        let vacation = VacationLedger.summary(vacationDays.vacationLedgerEntries,
                                               year: year,
                                               allowance: AppSettings.vacationAllowance(for: year),
                                               today: now)

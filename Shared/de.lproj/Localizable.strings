@@ -195,3 +195,11 @@
 "Weeks" = "Wochen";
 "Months" = "Monate";
 "Days off" = "Freie Tage";
+"Tags" = "Schlagwörter";
+"Tag" = "Schlagwort";
+"All tags" = "Alle Schlagwörter";
+"No tag" = "Ohne Schlagwort";
+"New tag" = "Neues Schlagwort";
+"Home office" = "Homeoffice";
+"Hours per tag" = "Stunden pro Schlagwort";
+"Choose tags when you add or edit a shift, and filter by them in the statistics. Removing a tag keeps it on the shifts that already have it." = "Schlagwörter wählst du beim Eintragen oder Bearbeiten einer Schicht aus und kannst in der Statistik danach filtern. Wenn du ein Schlagwort entfernst, bleibt es bei den Schichten erhalten, die es schon haben.";

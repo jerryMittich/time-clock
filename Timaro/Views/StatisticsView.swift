@@ -2,8 +2,8 @@ import SwiftUI
 import SwiftData
 import Charts
 
-/// Statistics for a chosen period and workplace: totals, hours over time, average per
-/// weekday, share per workplace, a list per day/week/month and days off.
+/// Statistics for a chosen period, workplace and tag: totals, hours over time, average per
+/// weekday, share per workplace and per tag, a list per day/week/month and days off.
 struct StatisticsView: View {
     @Query(sort: \WorkSession.start) private var sessions: [WorkSession]
     @Query private var daysOff: [VacationDay]
@@ -16,6 +16,8 @@ struct StatisticsView: View {
     @State private var customTo = Date.now
     /// nil for all workplaces, "" for shifts without a workplace.
     @State private var workplace: String?
+    /// nil for all tags, "" for shifts without a tag.
+    @State private var tag: String?
 
     enum Period: CaseIterable, Identifiable {
         case week, month, year, all, custom
@@ -44,7 +46,8 @@ struct StatisticsView: View {
 
     private var calendar: Calendar { .current }
     private var dailyTarget: TimeInterval { dailyTargetHours * 3600 }
-    private var showsOvertime: Bool { workplace == nil }
+    /// Overtime only means something for all shifts together.
+    private var showsOvertime: Bool { workplace == nil && tag == nil }
 
     private var interval: DateInterval {
         let today = calendar.startOfDay(for: .now)
@@ -73,18 +76,34 @@ struct StatisticsView: View {
         return names
     }
 
+    /// Tags to filter by: those in the settings and any still on shifts; "" stands for
+    /// shifts without a tag.
+    private var tagNames: [String] {
+        var names = AppSettings.tags
+        for session in sessions {
+            for tag in session.tags where !names.contains(tag) { names.append(tag) }
+        }
+        if !names.isEmpty && sessions.contains(where: { $0.tags.isEmpty }) { names.append("") }
+        return names
+    }
+
     var body: some View {
         let range = self.interval
         let grouping = Statistics.grouping(for: range)
         let shifts = sessions
             .filter { workplace == nil || ($0.workplace?.name ?? "") == workplace }
+            .filter { session in
+                guard let tag else { return true }
+                return tag.isEmpty ? session.tags.isEmpty : session.tags.contains(tag)
+            }
             .map { session in
                 Statistics.Shift(start: session.start,
                                  worked: session.duration(),
                                  breaks: session.breakDuration(),
                                  earned: session.earnings(),
                                  workplace: session.workplace?.name,
-                                 isOpen: session.isOpen)
+                                 isOpen: session.isOpen,
+                                 tags: session.tags)
             }
         let report = Statistics.report(shifts: shifts,
                                        daysOff: daysOff.statisticsEntries,
@@ -120,6 +139,11 @@ struct StatisticsView: View {
                                 .listRowBackground(Color.clear)
                             if workplace == nil && report.workplaces.count > 1 {
                                 workplaceChart(report)
+                                    .listRowInsets(EdgeInsets())
+                                    .listRowBackground(Color.clear)
+                            }
+                            if tag == nil && report.tags.contains(where: { !$0.name.isEmpty }) {
+                                tagChart(report)
                                     .listRowInsets(EdgeInsets())
                                     .listRowBackground(Color.clear)
                             }
@@ -175,6 +199,15 @@ struct StatisticsView: View {
                     }
                 }
             }
+
+            if !tagNames.isEmpty {
+                Picker("Tag", selection: $tag) {
+                    Text("All tags").tag(String?.none)
+                    ForEach(tagNames, id: \.self) { name in
+                        Text(tagName(name)).tag(Optional(name))
+                    }
+                }
+            }
         }
     }
 
@@ -202,6 +235,10 @@ struct StatisticsView: View {
 
     private func displayName(_ workplace: String) -> String {
         workplace.isEmpty ? String(localized: "No workplace") : workplace
+    }
+
+    private func tagName(_ tag: String) -> String {
+        tag.isEmpty ? String(localized: "No tag") : tag
     }
 
     // MARK: Tiles
@@ -307,6 +344,25 @@ struct StatisticsView: View {
                     }
                 }
             }
+        }
+    }
+
+    private func tagChart(_ report: Statistics.Report) -> some View {
+        ChartCard(title: "Hours per tag") {
+            Chart(report.tags) { share in
+                BarMark(x: .value("Hours", share.worked / 3600),
+                        y: .value("Tag", tagName(share.name)))
+                    .foregroundStyle(share.name.isEmpty ? Color.gray.gradient : Theme.deepSky.gradient)
+                    .cornerRadius(4)
+                    .annotation(position: .trailing) {
+                        Text(Formatters.duration(share.worked))
+                            .font(.caption)
+                            .monospacedDigit()
+                            .foregroundStyle(.secondary)
+                    }
+            }
+            .chartXAxis(.hidden)
+            .frame(height: CGFloat(report.tags.count) * 36 + 8)
         }
     }
 

@@ -195,3 +195,11 @@
 "Weeks" = "Settimane";
 "Months" = "Mesi";
 "Days off" = "Giorni liberi";
+"Tags" = "Etichette";
+"Tag" = "Etichetta";
+"All tags" = "Tutte le etichette";
+"No tag" = "Senza etichetta";
+"New tag" = "Nuova etichetta";
+"Home office" = "Smart working";
+"Hours per tag" = "Ore per etichetta";
+"Choose tags when you add or edit a shift, and filter by them in the statistics. Removing a tag keeps it on the shifts that already have it." = "Scegli le etichette quando aggiungi o modifichi un turno e filtra per etichetta nelle statistiche. Se rimuovi un'etichetta, resta sui turni che la hanno già.";

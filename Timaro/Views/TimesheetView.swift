@@ -388,6 +388,7 @@ private struct SessionItem: Identifiable {
     let breakMinutes: Int
     let breakSeconds: TimeInterval
     let workplaceName: String?
+    let tags: [String]
     let worked: TimeInterval
     let earned: Double
 
@@ -400,6 +401,7 @@ private struct SessionItem: Identifiable {
         breakMinutes = session.breakMinutes
         breakSeconds = session.breakDuration()
         workplaceName = session.workplace?.name
+        tags = session.tags
         worked = session.duration()
         earned = session.earnings()
     }
@@ -425,8 +427,8 @@ private struct SessionRow: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
-                if let name = session.workplaceName {
-                    Text(name).font(.caption).foregroundStyle(.secondary)
+                if let caption {
+                    Text(caption).font(.caption).foregroundStyle(.secondary)
                 }
             }
             Spacer()
@@ -442,6 +444,12 @@ private struct SessionRow: View {
             }
         }
         .contentShape(Rectangle())
+    }
+
+    /// Workplace and tags, e.g. "Office · Home office".
+    private var caption: String? {
+        let parts = [session.workplaceName].compactMap { $0 } + session.tags
+        return parts.isEmpty ? nil : parts.joined(separator: " · ")
     }
 
     private var timeRange: String {

@@ -15,6 +15,7 @@ struct SessionEditor: View {
     @State private var breakMinutes = 0
     @State private var note = ""
     @State private var workplaceID: UUID?
+    @State private var tags: [String] = []
     @State private var editingBreak = false
     @State private var deleteOnClose = false
 
@@ -45,6 +46,29 @@ struct SessionEditor: View {
                     .foregroundStyle(.primary)
                     if editingBreak {
                         BreakDurationPicker(minutes: $breakMinutes)
+                    }
+                }
+                if !tagOptions.isEmpty {
+                    Section("Tags") {
+                        ForEach(tagOptions, id: \.self) { tag in
+                            Button {
+                                if let index = tags.firstIndex(of: tag) {
+                                    tags.remove(at: index)
+                                } else {
+                                    tags.append(tag)
+                                }
+                            } label: {
+                                HStack {
+                                    Label(tag, systemImage: "tag")
+                                    Spacer()
+                                    if tags.contains(tag) {
+                                        Image(systemName: "checkmark")
+                                            .foregroundStyle(Color.accentColor)
+                                    }
+                                }
+                            }
+                            .foregroundStyle(.primary)
+                        }
                     }
                 }
                 Section("Note") {
@@ -88,6 +112,13 @@ struct SessionEditor: View {
         breakMinutes = session.breakMinutes
         note = session.note
         workplaceID = session.workplace?.id
+        tags = session.tags
+    }
+
+    /// Tags from the settings, plus any the shift has that were removed there since.
+    private var tagOptions: [String] {
+        let available = AppSettings.tags
+        return available + (session?.tags ?? []).filter { !available.contains($0) }
     }
 
     private func save() {
@@ -105,6 +136,8 @@ struct SessionEditor: View {
         }
         target.note = note
         target.workplace = workplaces.first { $0.id == workplaceID }
+        // Keep the order of the settings list.
+        target.tags = tagOptions.filter { tags.contains($0) }
         try? context.save()
         dismiss()
     }

@@ -16,6 +16,8 @@ final class WorkSession {
     /// Start of the break currently in progress; nil while working or after the shift ended.
     var pausedAt: Date? = nil
     var workplace: Workplace?
+    /// Tags from the settings, e.g. "Home office", for filtering in the statistics.
+    var tags: [String] = []
 
     init(start: Date = .now,
          end: Date? = nil,

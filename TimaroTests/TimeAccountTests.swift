@@ -419,3 +419,24 @@ final class StatisticsTests: XCTestCase {
         XCTAssertEqual(Statistics.grouping(for: calendar.dateInterval(of: .year, for: day(10))!), .month)
     }
 }
+
+final class StatisticsTagTests: XCTestCase {
+    private let start = Date(timeIntervalSinceReferenceDate: 800_000_000)
+
+    private func shift(hours: Double, tags: [String]) -> Statistics.Shift {
+        Statistics.Shift(start: start, worked: hours * 3600, breaks: 0, earned: 0,
+                         workplace: nil, isOpen: false, tags: tags)
+    }
+
+    func testHoursPerTagCountShiftsForEachOfTheirTags() {
+        let shifts = [shift(hours: 8, tags: ["Home office"]),
+                      shift(hours: 2, tags: ["Home office", "Training"]),
+                      shift(hours: 3, tags: [])]
+        let report = Statistics.report(shifts: shifts, daysOff: [],
+                                       in: DateInterval(start: start.addingTimeInterval(-3600), duration: 86_400),
+                                       dailyTarget: 8 * 3600, grouping: .day)
+        XCTAssertEqual(report.tags.map(\.name), ["Home office", "", "Training"])
+        XCTAssertEqual(report.tags.map(\.worked), [10 * 3600, 3 * 3600, 2 * 3600])
+        XCTAssertEqual(report.worked, 13 * 3600, accuracy: 1)
+    }
+}

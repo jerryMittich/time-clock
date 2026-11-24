@@ -11,6 +11,8 @@ enum AppSettings {
         static let initialBalanceMinutes = "initialBalanceMinutes"
         /// Absence reasons other than vacation, e.g. sick leave ([String]).
         static let absenceReasons = "absenceReasons"
+        /// Tags for shifts, e.g. home office ([String]).
+        static let tags = "tags"
     }
 
     static func registerDefaults() {
@@ -56,6 +58,12 @@ enum AppSettings {
             ]
         }
         set { UserDefaults.standard.set(newValue, forKey: Key.absenceReasons) }
+    }
+
+    /// Tags to choose from when entering or editing a shift.
+    static var tags: [String] {
+        get { UserDefaults.standard.stringArray(forKey: Key.tags) ?? [String(localized: "Home office")] }
+        set { UserDefaults.standard.set(newValue, forKey: Key.tags) }
     }
 
     /// Rounds a punch time to the nearest multiple of `roundingMinutes` (0 = no rounding).

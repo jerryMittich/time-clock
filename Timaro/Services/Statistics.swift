@@ -1,7 +1,7 @@
 import Foundation
 
 /// Figures for the statistics tab: totals, hours per day/week/month, average per weekday,
-/// share per workplace and days off, for one period. Target and overtime follow the
+/// share per workplace and per tag, and days off, for one period. Target and overtime follow the
 /// time account (`TimeAccount`): only days with shifts count, days off lower the target.
 enum Statistics {
     struct Shift {
@@ -11,6 +11,7 @@ enum Statistics {
         var earned: Double
         var workplace: String?
         var isOpen: Bool
+        var tags: [String] = []
     }
 
     struct DayOff {
@@ -49,7 +50,7 @@ enum Statistics {
     }
 
     struct Share: Identifiable, Equatable {
-        /// Workplace name; empty for shifts without a workplace.
+        /// Workplace or tag; empty for shifts without one.
         var name: String
         var worked: TimeInterval
         var id: String { name }
@@ -73,6 +74,8 @@ enum Statistics {
         var weekdays: [WeekdayAverage] = []
         /// Largest first.
         var workplaces: [Share] = []
+        /// Largest first. A shift with several tags counts for each of them.
+        var tags: [Share] = []
 
         var averagePerWorkDay: TimeInterval { workDays > 0 ? worked / Double(workDays) : 0 }
         var absenceDays: Double { absences.values.reduce(0, +) }
@@ -157,6 +160,17 @@ enum Statistics {
 
         report.workplaces = Dictionary(grouping: inRange) { $0.workplace ?? "" }
             .map { Share(name: $0.key, worked: $0.value.reduce(0) { $0 + $1.worked }) }
+            .filter { $0.worked > 0 }
+            .sorted { $0.worked > $1.worked }
+
+        var byTag: [String: TimeInterval] = [:]
+        for shift in inRange {
+            for tag in shift.tags.isEmpty ? [""] : shift.tags {
+                byTag[tag, default: 0] += shift.worked
+            }
+        }
+        report.tags = byTag
+            .map { Share(name: $0.key, worked: $0.value) }
             .filter { $0.worked > 0 }
             .sorted { $0.worked > $1.worked }
 

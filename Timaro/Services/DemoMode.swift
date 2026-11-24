@@ -98,6 +98,12 @@ enum DemoMode {
                                       isAutomatic: true,
                                       workplace: atClient ? client : office)
             session.closedAutomatically = true
+            // Fridays from home: clocked by hand and tagged.
+            if !atClient, calendar.component(.weekday, from: day) == 6, let homeOffice = AppSettings.tags.first {
+                session.tags = [homeOffice]
+                session.isAutomatic = false
+                session.closedAutomatically = false
+            }
             context.insert(session)
         }
 

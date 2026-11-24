@@ -34,7 +34,12 @@ struct SettingsView: View {
                         }
                     }
                     NavigationLink {
-                        AbsenceReasonsView()
+                        NameListView.tags
+                    } label: {
+                        Label("Tags", systemImage: "tag")
+                    }
+                    NavigationLink {
+                        NameListView.absenceReasons
                     } label: {
                         Label("Absence reasons", systemImage: "cross.case")
                     }

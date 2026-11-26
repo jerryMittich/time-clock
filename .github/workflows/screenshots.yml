@@ -17,7 +17,8 @@ permissions:
 
 jobs:
   screenshots:
-    runs-on: macos-26
+    # Xcode 27 (iOS 27 SDK) has its own runner image label.
+    runs-on: xcode-27
     env:
       BUNDLE_ID: com.timaro.timeclock
       # Sample workplace, so the map shows the user next to it.

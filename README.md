@@ -39,7 +39,7 @@ TimaroTests                 Unit tests for the time account, breaks and vacation
 
 ## Build
 
-Requirements: Xcode 15 or later and iOS 17 or later.
+Requirements: Xcode 15 or later and iOS 17 or later. App Store Connect accepts uploads only from Xcode 27 (iOS 27 SDK) from April 2027; CI and TestFlight builds run on the `xcode-27` runner image.
 
 ```sh
 brew install xcodegen

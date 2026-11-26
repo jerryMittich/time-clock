@@ -11,7 +11,8 @@ on:
 
 jobs:
   check:
-    runs-on: macos-26
+    # Xcode 27 runs on its own image label (GA since October 2026).
+    runs-on: xcode-27
     steps:
       - uses: actions/checkout@v5
 
